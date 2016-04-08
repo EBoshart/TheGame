@@ -9,15 +9,25 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import com.sun.javafx.geom.Rectangle;
+
+import javafx.css.SimpleStyleableObjectProperty;
 
 public class GamePaneel extends JPanel implements KeyListener{
 	int x;
 	Tileset[] gameworld;
 	Character c;
 	boolean gameover=false;
+	ArrayList< Rectangle>  rCube = new ArrayList();
+	Rectangle rCharacter;
+	int rectsize=100;
+
+	
 	GamePaneel(int x,Tileset[] world, Character c) {
 		this.x=x;
 		this.c=c;
@@ -26,13 +36,18 @@ public class GamePaneel extends JPanel implements KeyListener{
 		addKeyListener(this);
 		setFocusable(true);
 		requestFocus();
+
+		//rCube = new Rectangle();
+		rCharacter = new Rectangle();
+		
 	}
 
 
 
 	public void paintComponent(Graphics g) {
-
-		int rectsize=100;
+		rCube.clear();
+		
+		
 		Graphics2D g2 = (Graphics2D) g;
 
 		super.paintComponent(g);		
@@ -41,8 +56,11 @@ public class GamePaneel extends JPanel implements KeyListener{
 		BufferedImage image;
 		try {
 			image = ImageIO.read(file);
-			int size = 50;
+			int size = 100;
 			g2.drawImage(image, c.posX, getHeight() - 200 - size - c.posY  , size, size, this); 
+			rCharacter.setBounds(c.posX, getHeight() - 200 - size - c.posY, size, size);
+			g.drawRect(c.posX, getHeight() - 200 - size - c.posY, size, size);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,7 +74,7 @@ public class GamePaneel extends JPanel implements KeyListener{
 
 		//	System.out.println("bla");
 		//System.out.println(x);
-		
+
 		for(int i=0;i<gameworld.length;i++) {
 			for (int j=0;j<3;j++) {
 
@@ -69,22 +87,43 @@ public class GamePaneel extends JPanel implements KeyListener{
 							g.setColor(Color.BLACK);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 //							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							Rectangle cube=new Rectangle();
+							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							rCube.add(cube);
+							g.setColor(Color.ORANGE);
+							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							
 						}
 						else if(gameworld[i].set==1) {
 							g.setColor(Color.RED);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 //							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							Rectangle cube=new Rectangle();
+							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							rCube.add(cube);
+							g.setColor(Color.ORANGE);
+							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 						}
 						else if(gameworld[i].set==2) {
 							g.setColor(Color.GREEN);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 //							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							Rectangle cube=new Rectangle();
+							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							rCube.add(cube);
+							g.setColor(Color.ORANGE);
+							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 						}
 
 						else {
 							g.setColor(Color.YELLOW);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 //							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							Rectangle cube=new Rectangle();
+							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							rCube.add(cube);
+							g.setColor(Color.ORANGE);
+							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 						}
 
 
@@ -122,14 +161,13 @@ public class GamePaneel extends JPanel implements KeyListener{
 		else {
 			gameover=false;
 		}
-
-
-
 	}
 
 
 
+
 	public void keyPressed(KeyEvent e) {
+		boolean collission=false;
 		int keyCode = e.getKeyCode();
 	//	int A=(int) x/(3*rectsize);
 		if (gameover) {
@@ -142,9 +180,29 @@ public class GamePaneel extends JPanel implements KeyListener{
 			
 		
 		switch( keyCode ){
-		
+			
 		//	case if(gameworld[(int) x/(3*rectsize)].getSet()] 
-			case KeyEvent.VK_RIGHT : x = x - 10;
+			case KeyEvent.VK_RIGHT :
+			for(int i=0;i<rCube.size();i++) {
+				
+			//	System.out.println(rCharacter.x+" "+rCharacter.y+" "+ rCube.get(i).x+ " "+rCube.get(i).y );
+				if(testCollision(rCharacter.x,rCharacter.y,rCube.get(i).x,rCube.get(i).y,rectsize))
+				{
+					System.out.println(rCharacter.x+" "+rCharacter.y+" "+ rCube.get(i).x+ " "+rCube.get(i).y );
+					System.out.println(i);
+					collission =true; 
+					System.out.print(collission);
+				}
+					
+			}
+			if (collission) {
+				System.out.println("test iets");
+				
+			}
+			else {
+				x=x-10;
+			}
+			
 		//	System.out.println(x);
 			break;
 			case KeyEvent.VK_LEFT : x = x + 10;
@@ -154,6 +212,8 @@ public class GamePaneel extends JPanel implements KeyListener{
 			case KeyEvent.VK_DOWN: c.moveup(-10);
 			break;
 		}
+		
+		
 		}
 		repaint();
 	}
@@ -161,4 +221,60 @@ public class GamePaneel extends JPanel implements KeyListener{
 
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
+	
+	public boolean testCollision(int x1, int y1 , int x2, int y2, int rectsize)
+	{
+		if(x1 > x2 && y1 > y2)
+		{
+			
+			if(x2 + rectsize > x1 && y1 - rectsize > y2)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		if(x1 < x2 && y1 > y2)
+		{
+			if(x1 + rectsize > x2 && y1 - rectsize > y2)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		if(x1 < x2 && y1 < y2)
+		{
+			if(x1 + rectsize > x2 && y2 - rectsize > y1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			
+		}
+		
+		if(x1 > x2 && y1 < y2)
+		{
+			if(x2 + rectsize > x1 && y2 - rectsize < y1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return false;
+		
+	}
+	
 }
