@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -13,19 +16,21 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import com.sun.javafx.geom.Rectangle;
+import javax.swing.Timer;
 
 import javafx.css.SimpleStyleableObjectProperty;
 
-public class GamePaneel extends JPanel implements KeyListener{
+public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	int x;
 	Tileset[] gameworld;
 	Character c;
-	boolean gameover=false;
+	boolean gameover=true;
 	ArrayList< Rectangle>  rCube = new ArrayList();
+	//	Rectangle cube = new Rectangle();
 	Rectangle rCharacter;
 	int rectsize=100;
+	boolean forward = false;
+int gravity=1;
 
 
 	GamePaneel(int x,Tileset[] world, Character c) {
@@ -36,12 +41,58 @@ public class GamePaneel extends JPanel implements KeyListener{
 		addKeyListener(this);
 		setFocusable(true);
 		requestFocus();
-
+		Timer time = new Timer(10, this);
+		time.start();
 		rCharacter = new Rectangle();
 
 	}
 
+	public void actionPerformed(ActionEvent e) {
+	//	int gravity=2;
+		for(Rectangle cube:rCube) {
+			//for (int i=0;i<rcube.size;i++)
+			cube.y=cube.y-gravity;
+		}
+		if (testCollission(rCube,rCharacter)){
+			gravity=1;
+		}
+		else {
+			c.moveup(-gravity);
+			//gravity+=0.2;
+//			VERANDER NAAR DOUBLE IN CHARACTER
+//			
+//			
+//			
+//			
+//			
+		}
+		for(Rectangle cube:rCube) {
+			cube.y=cube.y+gravity;
+		}
+		
+		repaint();
+		
+		
 
+//		Graphics2D g2 = (Graphics2D) g;
+//
+//		super.paintComponent(g);		
+//		String path = "Sprites/pikachu.png";
+//		File file = new File(path);
+//		BufferedImage image;
+//		try {
+//			image = ImageIO.read(file);
+//			int size = 100;
+//			g2.drawImage(image, c.posX + 200, getHeight() - size - c.posY  , size, size, this); 
+//			rCharacter.setBounds(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
+//			//
+//			g.drawRect(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
+//
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
 	public void paintComponent(Graphics g) {
 		rCube.clear();
 
@@ -53,10 +104,22 @@ public class GamePaneel extends JPanel implements KeyListener{
 		BufferedImage image;
 		try {
 			image = ImageIO.read(file);
-			int size = 100;
-			g2.drawImage(image, c.posX, getHeight() - size - c.posY  , size, size, this); 
-			rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size, size);
-			g.drawRect(c.posX, getHeight()  - size - c.posY, size, size);
+			int size = rectsize;
+			if (forward) {
+				g2.drawImage(image, c.posX, getHeight() - size - c.posY  , size, size, this); 
+				rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
+				
+			} else {
+				g2.drawImage(image, c.posX+size, getHeight() - size - c.posY  , -size, size, this); 
+				rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
+				
+			}
+			
+
+			//g2.drawImage(image, c.posX + 200, getHeight() - size - c.posY  , size, size, this); 
+			rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
+			//
+			g.drawRect(c.posX , getHeight()  - size - c.posY, size + 10, size);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -78,13 +141,13 @@ public class GamePaneel extends JPanel implements KeyListener{
 				for (int k=0;k<3;k++) {
 					//						System.out.println(gameworld[i].getSet()[j][k].type);
 					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
-
+						Rectangle cube= new Rectangle();
 						//	System.out.println("solid");
 						if (gameworld[i].set==0) {
 							g.setColor(Color.BLACK);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							Rectangle cube=new Rectangle();
+
 							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							rCube.add(cube);
 							g.setColor(Color.ORANGE);
@@ -94,8 +157,7 @@ public class GamePaneel extends JPanel implements KeyListener{
 						else if(gameworld[i].set==1) {
 							g.setColor(Color.RED);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							Rectangle cube=new Rectangle();
+							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize
 							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							rCube.add(cube);
 							g.setColor(Color.ORANGE);
@@ -105,7 +167,6 @@ public class GamePaneel extends JPanel implements KeyListener{
 							g.setColor(Color.GREEN);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							Rectangle cube=new Rectangle();
 							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							rCube.add(cube);
 							g.setColor(Color.ORANGE);
@@ -116,7 +177,6 @@ public class GamePaneel extends JPanel implements KeyListener{
 							g.setColor(Color.YELLOW);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							Rectangle cube=new Rectangle();
 							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 							rCube.add(cube);
 							g.setColor(Color.ORANGE);
@@ -133,10 +193,16 @@ public class GamePaneel extends JPanel implements KeyListener{
 					}
 				}
 			}
+
 		}
+		//
+		//	
+		//	System.out.println("x= "+rCube.get(rCube.size()-1).x+ "  y= " +rCube.get(rCube.size()-1).y);
+		//	System.out.println("x= "+rCube.get(1).x+ "  y= " +rCube.get(1).y);
+		//	System.out.println("x= "+rCube.get(10).x+ "  y= " +rCube.get(10).y);
+		//System.out.println(rCube.size());
 
-
-		if(c.posY<=-200) {
+		if(c.posY<0) {
 			gameover=true;
 			System.out.println(x);
 			System.out.println(c.posX);
@@ -159,8 +225,36 @@ public class GamePaneel extends JPanel implements KeyListener{
 		else {
 			gameover=false;
 		}
+
 	}
-	
+	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
+	{
+		for(int i=0;i<rCube.size();i++) {
+			if(gameUpdate(rCube.get(i),rCharacter)) 
+			{
+				return true;
+			}
+
+		}
+		return false;
+
+
+	}
+
+
+	public boolean gameUpdate(Rectangle kubus, Rectangle pikachu)
+	{
+		if(kubus.intersects(pikachu))
+		{
+
+			return true;
+		}
+		else
+		{
+			//System.out.println("misschien heeft samuel ongelijk");
+			return false;
+		}
+	}
 
 
 	public void keyPressed(KeyEvent e) {
@@ -169,7 +263,8 @@ public class GamePaneel extends JPanel implements KeyListener{
 		//	int A=(int) x/(3*rectsize);
 		if (gameover) {
 			if(keyCode==KeyEvent.VK_SPACE) {
-				c.posX=0;c.posY=0;
+				c.posX=200;c.posY=500;
+				forward=true;
 			}
 
 
@@ -180,30 +275,24 @@ public class GamePaneel extends JPanel implements KeyListener{
 
 			//	case if(gameworld[(int) x/(3*rectsize)].getSet()] 
 			case KeyEvent.VK_RIGHT :
-				for(int i=0;i<rCube.size();i++) {
 
-					//	System.out.println(rCharacter.x+" "+rCharacter.y+" "+ rCube.get(i).x+ " "+rCube.get(i).y );
-					if(testCollision(rCharacter.x,rCharacter.y,rCube.get(i).x,rCube.get(i).y,rectsize))
-					{
-						System.out.println(rCharacter.x+" "+rCharacter.y+" "+ rCube.get(i).x+ " "+rCube.get(i).y );
-						System.out.println(i);
-						collission =true; 
-						System.out.print(collission);
-					}
-
-				}
-				if (collission) {
-					System.out.println("test iets");
+				if (testCollission(rCube,rCharacter) && forward){
 
 				}
 				else {
+					forward = true;
 					x=x-10;
 				}
-
-				//	System.out.println(x);
 				break;
-			case KeyEvent.VK_LEFT : x = x + 10;
-			break;
+			case KeyEvent.VK_LEFT : 
+				if (testCollission(rCube,rCharacter) && !forward){
+				}
+				else {
+					forward = false;
+					x = x + 10;
+				}
+
+				break;
 			case KeyEvent.VK_UP : c.moveup(10);
 			break;
 			case KeyEvent.VK_DOWN: c.moveup(-10);
@@ -219,59 +308,6 @@ public class GamePaneel extends JPanel implements KeyListener{
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
 
-	public boolean testCollision(int x1, int y1 , int x2, int y2, int rectsize)
-	{
-		if(x1 > x2 && y1 > y2)
-		{
 
-			if(x2 + rectsize > x1 && y1 - rectsize > y2)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		if(x1 < x2 && y1 > y2)
-		{
-			if(x1 + rectsize > x2 && y1 - rectsize > y2)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		if(x1 < x2 && y1 < y2)
-		{
-			if(x1 + rectsize > x2 && y2 - rectsize > y1)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-
-		}
-
-		if(x1 > x2 && y1 < y2)
-		{
-			if(x2 + rectsize > x1 && y2 - rectsize < y1)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
-
-	}
 
 }
