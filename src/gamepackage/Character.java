@@ -26,7 +26,7 @@ public class Character extends JPanel{
 	
 	
 	Character(int posX, int posY) {
-		this.posX = posX+200;
+		this.posX = posX;
 		this.posY = posY;
 	}
 
