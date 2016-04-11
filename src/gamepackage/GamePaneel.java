@@ -28,13 +28,15 @@ public class GamePaneel extends JPanel implements KeyListener{
 		requestFocus();
 	}
 
-
+/* TEST TEST TEST *//* TEST TEST TEST */
+	/* TEST TEST TEST *//* TEST TEST TEST *//* TEST TEST TEST *//* TEST TEST TEST *//* TEST TEST TEST */
+	/* TEST TEST TEST *//* TEST TEST TEST *//* TEST TEST TEST */
 
 	public void paintComponent(Graphics g) {
 
 		int rectsize=100;
 		Graphics2D g2 = (Graphics2D) g;
-
+		
 		super.paintComponent(g);		
 		String path = "Sprites/pikachu.png";
 		File file = new File(path);
