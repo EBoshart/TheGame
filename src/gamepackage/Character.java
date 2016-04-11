@@ -45,8 +45,8 @@ public class Character extends JPanel{
 		repaint();
 		
 	}
-	public void moveup(int direction) {
-		posY+=direction;
+	public void moveup(double gravity) {
+		posY+=gravity;
 		repaint();
 	}
 	

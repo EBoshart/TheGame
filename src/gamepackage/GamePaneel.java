@@ -30,7 +30,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	Rectangle rCharacter;
 	int rectsize=100;
 	boolean forward = false;
-int gravity=1;
+	boolean jump = false;
+	double gravity=1;
 
 
 	GamePaneel(int x,Tileset[] world, Character c) {
@@ -48,26 +49,36 @@ int gravity=1;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-	//	int gravity=2;
+		
 		for(Rectangle cube:rCube) {
 			//for (int i=0;i<rcube.size;i++)
-			cube.y=cube.y-gravity;
+			cube.y=(int) (cube.y-gravity);
 		}
-		if (testCollission(rCube,rCharacter)){
+		
+		if(jump)
+		{
+			c.moveup(+gravity);
+			gravity+=0.2;
+			x = x - 10;
+			if(gravity >10)
+			{
+				jump = false;
+			}
+	 
+		}
+
+		else if (testCollission(rCube,rCharacter)){
 			gravity=1;
 		}
 		else {
 			c.moveup(-gravity);
-			//gravity+=0.2;
-//			VERANDER NAAR DOUBLE IN CHARACTER
-//			
-//			
-//			
-//			
-//			
+			gravity+=0.2;	
 		}
+		
+		
+		
 		for(Rectangle cube:rCube) {
-			cube.y=cube.y+gravity;
+			cube.y=(int) (cube.y+gravity);
 		}
 		
 		repaint();
@@ -256,7 +267,6 @@ int gravity=1;
 		}
 	}
 
-
 	public void keyPressed(KeyEvent e) {
 		boolean collission=false;
 		int keyCode = e.getKeyCode();
@@ -305,7 +315,19 @@ int gravity=1;
 	}
 
 
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+
+		int keyCode = e.getKeyCode();
+		
+		switch( keyCode ){
+		case KeyEvent.VK_SPACE :
+
+			{
+				jump = true;
+			}
+		}
+
+	}
 	public void keyTyped(KeyEvent e) {}
 
 
