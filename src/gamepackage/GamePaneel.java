@@ -17,10 +17,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
 
-import javafx.css.SimpleStyleableObjectProperty;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	int x;
@@ -35,8 +33,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	boolean jump = false;
 	double gravity=1;
 	boolean debug = false;
-	
-	TextArea debugArea = new TextArea(5,30);
+	ArrayList<String> debugList = new ArrayList<String>();
 
 
 	GamePaneel(int x,Tileset[] world, Character c) {
@@ -50,20 +47,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		Timer time = new Timer(10, this);
 		time.start();
 		rCharacter = new Rectangle();
-		add(debugArea);
-		debugArea.setVisible(false);
+		
+		
 	}
 	
 	private void toggleDebug() {
 		debug = !debug;
-		debugArea.setVisible(debug);
-		repaint();
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(debug){
-			debugArea.setText("x: "+x + "\nc.posX: " + c.posX);
-		}
 		
 		for(Rectangle cube:rCube) {
 			//for (int i=0;i<rcube.size;i++)
@@ -157,23 +149,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			e.printStackTrace();
 		}
 
-
-		//	Tileset[] gameworld=Test.world.getGameWorld();
-		//	GameWorld bla=Test.world;
-		//	Tileset[] gameworld=world.
-
-
-		//	System.out.println("bla");
-		//System.out.println(x);
-
 		for(int i=0;i<gameworld.length;i++) {
 			for (int j=0;j<3;j++) {
 
 				for (int k=0;k<3;k++) {
-					//						System.out.println(gameworld[i].getSet()[j][k].type);
 					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
 						Rectangle cube= new Rectangle();
-						//	System.out.println("solid");
 						if (gameworld[i].set==0) {
 							g.setColor(Color.BLACK);
 							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
@@ -217,7 +198,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 
 					}
 					else {
-						//System.out.println("empty");
 						//	g.setColor(Color.GREEN);
 						//	g.fillRect((3*i+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 
@@ -226,20 +206,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			}
 
 		}
-		//
-		//	
-		//	System.out.println("x= "+rCube.get(rCube.size()-1).x+ "  y= " +rCube.get(rCube.size()-1).y);
-		//	System.out.println("x= "+rCube.get(1).x+ "  y= " +rCube.get(1).y);
-		//	System.out.println("x= "+rCube.get(10).x+ "  y= " +rCube.get(10).y);
-		//System.out.println(rCube.size());
 
 		if(c.posY<0) {
 			gameover=true;
-			
-			
-			
-			System.out.println(x);
-			System.out.println(c.posX);
 
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
@@ -254,8 +223,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			g.drawString("Game Over", 600, 500);
 			//	g.drawString("press space to restart", c.posX-100,800);
 			g.drawString("press space to restart",100,800);
-
-			System.out.println("game over");
 		}
 		else {
 			gameover=false;
@@ -265,6 +232,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			g.setColor(Color.black);
 			g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
 			g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
+			
+			Font debugFont = new Font ("Courier New", 1, 20);
+			g.setFont (debugFont);
+			
+			g.drawString("x: " +x, 10, 30);
+			g.drawString("c.posX: " +c.posX, 10, 50);
+			g.drawString("c.PosY: " +c.posY, 10, 70);
+			
+			
 		}
 
 	}
@@ -292,7 +268,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		}
 		else
 		{
-			//System.out.println("misschien heeft samuel ongelijk");
 			return false;
 		}
 	}
