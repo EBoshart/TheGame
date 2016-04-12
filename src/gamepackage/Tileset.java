@@ -2,7 +2,7 @@ package gamepackage;
 
 public class Tileset {
 	int set;
-final static int numberOfTileSets=4;
+final static int numberOfTileSets=5;
 	Tileset(int set) {
 		this.set=set;
 		
@@ -14,6 +14,8 @@ final static int numberOfTileSets=4;
 	case 1:   return new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
 	case 2:   return new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("solid"),new Tile("solid"),new Tile("solid")},{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
 	case 3:  return new Tile[][]{{new Tile("emty"),new Tile("empty"),new Tile("solid")}, {new Tile("empty"),new Tile("empty"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
+	case 4:   return new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("solid")},{new Tile("empty"),new Tile("empty"),new Tile("solid")}};
+	case 10:   return new Tile[][]{{new Tile("solid"),new Tile("empty"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("empty")},{new Tile("solid"),new Tile("empty"),new Tile("solid")}};
 
 	default: return new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("empty"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
 	}
