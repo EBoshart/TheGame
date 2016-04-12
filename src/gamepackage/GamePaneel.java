@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 
 import javafx.css.SimpleStyleableObjectProperty;
@@ -25,14 +27,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	Tileset[] gameworld;
 	Character c;
 	boolean gameover=true;
-	ArrayList< Rectangle>  rCube = new ArrayList();
+	ArrayList< Rectangle>  rCube = new ArrayList<>();
 	//	Rectangle cube = new Rectangle();
 	Rectangle rCharacter;
 	int rectsize=100;
 	boolean forward = false;
 	boolean jump = false;
 	double gravity=1;
-
+	boolean debug = false;
+	
+	TextArea debugArea = new TextArea(5,30);
 
 	GamePaneel(int x,Tileset[] world, Character c) {
 		this.x=x;
@@ -45,10 +49,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		Timer time = new Timer(10, this);
 		time.start();
 		rCharacter = new Rectangle();
-
+		add(debugArea);
+		debugArea.setVisible(false);
+	}
+	
+	private void toggleDebug() {
+		debug = !debug;
+		debugArea.setVisible(debug);
+		repaint();
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if(debug){
+			debugArea.setText("x: "+x + "\nc.posX: " + c.posX);
+		}
+		
 		
 		for(Rectangle cube:rCube) {
 			//for (int i=0;i<rcube.size;i++)
@@ -71,7 +86,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			gravity=1;
 		}
 		else {
-			c.moveup(-gravity);
+			c.moveup(-gravity+6);
 			gravity+=0.1;	
 		}
 		
@@ -105,11 +120,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 //		}
 	}
 	public void paintComponent(Graphics g) {
+		
+		
 		rCube.clear();
 
 		Graphics2D g2 = (Graphics2D) g;
+		
+		
 
-		super.paintComponent(g);		
+		super.paintComponent(g);	
+		
 		String path = "Sprites/pikachu.png";
 		File file = new File(path);
 		BufferedImage image;
@@ -215,6 +235,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 
 		if(c.posY<0) {
 			gameover=true;
+			
+			
+			
 			System.out.println(x);
 			System.out.println(c.posX);
 
@@ -223,9 +246,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			g.setColor(Color.BLACK);
 			Font myFont = new Font ("Courier New", 1, 130);
 
-
 			g.setFont (myFont);
 
+			gravity=-0.5;
+			
 			//g.drawString("Game Over", c.posX+400, 500);
 			g.drawString("Game Over", 600, 500);
 			//	g.drawString("press space to restart", c.posX-100,800);
@@ -235,6 +259,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		}
 		else {
 			gameover=false;
+		}
+		
+		if(debug){
+			g.setColor(Color.black);
+			g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
+			g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
 		}
 
 	}
@@ -291,7 +321,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				}
 				else {
 					forward = true;
-					x=x-10;
+					if(c.posX+rectsize < (getWidth()/3)){
+						c.move(10);
+					}
+					else{
+						x=x-10;
+					}
+					
 				}
 				break;
 			case KeyEvent.VK_LEFT : 
@@ -299,13 +335,28 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				}
 				else {
 					forward = false;
-					x = x + 10;
+					if(c.posX > (getWidth()/8)){
+						c.move(-10);
+					}
+					else{
+						x=x+10;
+					}
 				}
 
 				break;
-			case KeyEvent.VK_UP : c.moveup(10);
+			case KeyEvent.VK_UP : 
+				if (testCollission(rCube,rCharacter)){
+					c.moveup(10);
+				}
 			break;
-			case KeyEvent.VK_DOWN: c.moveup(-10);
+			case KeyEvent.VK_DOWN: 
+			if (testCollission(rCube,rCharacter)){
+				c.moveup(-10);
+				
+			}
+			break;
+			case KeyEvent.VK_D:
+				toggleDebug();
 			break;
 			}
 
@@ -314,6 +365,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		repaint();
 	}
 
+
+	
 
 	public void keyReleased(KeyEvent e) {
 
