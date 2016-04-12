@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -33,7 +33,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	boolean jump = false;
 	double gravity=1;
 	boolean debug = false;
-	ArrayList<String> debugList = new ArrayList<String>();
+	DecimalFormat df = new DecimalFormat("#.##");
 
 
 	GamePaneel(int x,Tileset[] world, Character c) {
@@ -239,16 +239,28 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 					g.drawLine((x+(50*r)-1000), 0, (x+(50*r)-1000), getHeight());	//verticale lijn
 				}
 				
+				g.setColor(Color.green);
+				g.drawLine(0, c.posY, getWidth(), c.posY); //horizontale lijn
+				g.drawLine(c.posX, getHeight(), c.posX, getHeight()); //verticale lijn
+				
 				g.setColor(Color.black);
 				g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
 				g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
 
-				Font debugFont = new Font ("Courier New", 1, 20);
+				Font debugFont = new Font ("Courier New", 1, 15);
 				g.setFont (debugFont);
 
-				g.drawString("x: " +x, 10, 30);
-				g.drawString("c.posX: " +c.posX, 10, 50);
-				g.drawString("c.PosY: " +c.posY, 10, 70);
+				int debugPos = 10;
+				int debugTextPos = 15;
+				g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("x: " +x, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("c.posX: " +c.posX, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("c.PosY: " +c.posY, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Toon: Awesome", debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Gravity: " + df.format(gravity), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
 			}
 
 		}
