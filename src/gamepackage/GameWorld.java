@@ -1,7 +1,7 @@
 package gamepackage;
 
 public class GameWorld {
-	static int worldSize=100;
+	static int worldSize=10;
 	Tileset bla=new Tileset(1);
 	
 	
@@ -14,7 +14,7 @@ public class GameWorld {
 		int x=(int) y;
 		gameWorld[0]=new Tileset(x);
 		
-		for(int i=1;i<100;i++) {
+		for(int i=1;i<worldSize ;i++) {
 			y=  Math.random()*Tileset.numberOfTileSets;
 			x=(int) y;
 			//System.out.println(x);
