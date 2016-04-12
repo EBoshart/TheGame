@@ -13,8 +13,8 @@ public class SoundClass {
 
 	public static void PlaySound(){
 		
-		//String bip = "file:/C:/Users/Student/git/TheGame/bin/Sound/Nyan.mp3";
-		String bip = "file:/C:/Users/Sabuzyra/git/TheGame/bin/Sound/Nyan.mp3";
+		String bip = "file:/C:/Users/Student/git/TheGame/bin/Sound/Nyan.mp3";
+		//String bip = "file:/C:/Users/Sabuzyra/git/TheGame/bin/Sound/Nyan.mp3";
 		System.out.println(bip);
 		Media hit = new Media(bip);
 		mediaPlayer = new MediaPlayer(hit);

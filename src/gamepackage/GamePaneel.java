@@ -58,9 +58,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		if(jump)
 		{
 			c.moveup(+gravity);
-			gravity+=0.2;
-			x = x - 10;
-			if(gravity >10)
+			gravity+=0.1;
+			//x = x - 10;
+			if(gravity >6)
 			{
 				jump = false;
 			}
@@ -72,7 +72,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		}
 		else {
 			c.moveup(-gravity);
-			gravity+=0.2;	
+			gravity+=0.1;	
 		}
 		
 		
