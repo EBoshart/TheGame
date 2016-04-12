@@ -38,6 +38,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	
 	TextArea debugArea = new TextArea(5,30);
 
+
 	GamePaneel(int x,Tileset[] world, Character c) {
 		this.x=x;
 		this.c=c;
@@ -64,12 +65,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			debugArea.setText("x: "+x + "\nc.posX: " + c.posX);
 		}
 		
-		
 		for(Rectangle cube:rCube) {
 			//for (int i=0;i<rcube.size;i++)
 			cube.y=(int) (cube.y-gravity);
 		}
-		
+
 		if(jump)
 		{
 			c.moveup(+gravity);
@@ -79,7 +79,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			{
 				jump = false;
 			}
-	 
+
 		}
 
 		else if (testCollission(rCube,rCharacter)){
@@ -89,35 +89,35 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			c.moveup(-gravity+6);
 			gravity+=0.1;	
 		}
-		
-		
-		
+
+
+
 		for(Rectangle cube:rCube) {
 			cube.y=(int) (cube.y+gravity);
 		}
-		
-		repaint();
-		
-		
 
-//		Graphics2D g2 = (Graphics2D) g;
-//
-//		super.paintComponent(g);		
-//		String path = "Sprites/pikachu.png";
-//		File file = new File(path);
-//		BufferedImage image;
-//		try {
-//			image = ImageIO.read(file);
-//			int size = 100;
-//			g2.drawImage(image, c.posX + 200, getHeight() - size - c.posY  , size, size, this); 
-//			rCharacter.setBounds(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
-//			//
-//			g.drawRect(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
-//
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		repaint();
+
+
+
+		//		Graphics2D g2 = (Graphics2D) g;
+		//
+		//		super.paintComponent(g);		
+		//		String path = "Sprites/pikachu.png";
+		//		File file = new File(path);
+		//		BufferedImage image;
+		//		try {
+		//			image = ImageIO.read(file);
+		//			int size = 100;
+		//			g2.drawImage(image, c.posX + 200, getHeight() - size - c.posY  , size, size, this); 
+		//			rCharacter.setBounds(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
+		//			//
+		//			g.drawRect(c.posX + 200, getHeight()  - size - c.posY, size + 10, size);
+		//
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 	}
 	public void paintComponent(Graphics g) {
 		
@@ -139,13 +139,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			if (forward) {
 				g2.drawImage(image, c.posX, getHeight() - size - c.posY  , size, size, this); 
 				rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
-				
+
 			} else {
 				g2.drawImage(image, c.posX+size, getHeight() - size - c.posY  , -size, size, this); 
 				rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
-				
+
 			}
-			
+
 
 			//g2.drawImage(image, c.posX + 200, getHeight() - size - c.posY  , size, size, this); 
 			rCharacter.setBounds(c.posX, getHeight()  - size - c.posY, size + 10, size);
@@ -332,6 +332,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				break;
 			case KeyEvent.VK_LEFT : 
 				if (testCollission(rCube,rCharacter) && !forward){
+
+
 				}
 				else {
 					forward = false;
@@ -344,6 +346,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				}
 
 				break;
+				
 			case KeyEvent.VK_UP : 
 				if (testCollission(rCube,rCharacter)){
 					c.moveup(10);
@@ -371,13 +374,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 	public void keyReleased(KeyEvent e) {
 
 		int keyCode = e.getKeyCode();
-		
+
 		switch( keyCode ){
 		case KeyEvent.VK_SPACE :
 
-			{
-				jump = true;
-			}
+		{
+			jump = true;
+		}
 		}
 
 	}
