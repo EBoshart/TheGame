@@ -47,16 +47,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		Timer time = new Timer(10, this);
 		time.start();
 		rCharacter = new Rectangle();
-		
-		
+
+
 	}
-	
+
 	private void toggleDebug() {
 		debug = !debug;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		
+
 		for(Rectangle cube:rCube) {
 			//for (int i=0;i<rcube.size;i++)
 			cube.y=(int) (cube.y-gravity);
@@ -112,16 +112,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 		//		}
 	}
 	public void paintComponent(Graphics g) {
-		
-		
+
+
 		rCube.clear();
 
 		Graphics2D g2 = (Graphics2D) g;
-		
-		
+
+
 
 		super.paintComponent(g);	
-		
+
 		String path = "Sprites/pikachu.png";
 		File file = new File(path);
 		BufferedImage image;
@@ -148,219 +148,227 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		for(int i=0;i<gameworld.length;i++) {
-			for (int j=0;j<3;j++) {
+			
 
-				for (int k=0;k<3;k++) {
-					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
-						Rectangle cube= new Rectangle();
-						if (gameworld[i].set==0) {
-							g.setColor(Color.BLACK);
-							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+				for (int j=0;j<3;j++) {
 
-							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							rCube.add(cube);
-							g.setColor(Color.ORANGE);
-							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+					for (int k=0;k<3;k++) {
+
+						if (gameworld[i].getSet()[j][k].type.equals("solid")) {
+							Rectangle cube= new Rectangle();
+
+							if (gameworld[i].set==0) {
+								g.setColor(Color.BLACK);
+								g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+
+								cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								rCube.add(cube);
+								g.setColor(Color.ORANGE);
+								g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+
+							}
+							else if(gameworld[i].set==1) {
+								g.setColor(Color.RED);
+								g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize
+								cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								rCube.add(cube);
+								g.setColor(Color.ORANGE);
+								g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							}
+							else if(gameworld[i].set==2) {
+								g.setColor(Color.GREEN);
+								g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								rCube.add(cube);
+								g.setColor(Color.ORANGE);
+								g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							}
+
+							else {
+								g.setColor(Color.YELLOW);
+								g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+								rCube.add(cube);
+								g.setColor(Color.ORANGE);
+								g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							}
+
 
 						}
-						else if(gameworld[i].set==1) {
-							g.setColor(Color.RED);
-							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize
-							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							rCube.add(cube);
-							g.setColor(Color.ORANGE);
-							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-						}
-						else if(gameworld[i].set==2) {
-							g.setColor(Color.GREEN);
-							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							rCube.add(cube);
-							g.setColor(Color.ORANGE);
-							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-						}
-
 						else {
-							g.setColor(Color.YELLOW);
-							g.fillRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							//							g.fillRect((3*(i-x/300)+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							cube.setBounds(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-							rCube.add(cube);
-							g.setColor(Color.ORANGE);
-							g.drawRect(((3*(i)+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+							//	g.setColor(Color.GREEN);
+							//	g.fillRect((3*i+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+
 						}
+					}
+				}
+
+			}
+
+			if(c.posY<0) {
+				gameover=true;
+
+				g.setColor(Color.WHITE);
+				g.fillRect(0, 0, getWidth(), getHeight());
+				g.setColor(Color.BLACK);
+				Font myFont = new Font ("Courier New", 1, 130);
+
+				g.setFont (myFont);
+
+				gravity=-0.5;
+
+				//g.drawString("Game Over", c.posX+400, 500);
+				g.drawString("Game Over", 600, 500);
+				//	g.drawString("press space to restart", c.posX-100,800);
+				g.drawString("press space to restart",100,800);
+			}
+			else {
+				gameover=false;
+			}
+
+			if(debug){
+				
+				g.setColor(Color.orange);
+				for(int r=0;r<1000;r++){
+					g.drawLine(-100, getHeight()-(50*r), getWidth(), getHeight()-(50*r)); //horizontale lijn
+					g.drawLine((x+(50*r)-1000), 0, (x+(50*r)-1000), getHeight());	//verticale lijn
+				}
+				
+				g.setColor(Color.black);
+				g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
+				g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
+
+				Font debugFont = new Font ("Courier New", 1, 20);
+				g.setFont (debugFont);
+
+				g.drawString("x: " +x, 10, 30);
+				g.drawString("c.posX: " +c.posX, 10, 50);
+				g.drawString("c.PosY: " +c.posY, 10, 70);
+			}
+
+		}
+		public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
+		{
+			for(int i=0;i<rCube.size();i++) {
+				if(gameUpdate(rCube.get(i),rCharacter)) 
+				{
+					return true;
+				}
+
+			}
+			return false;
+
+
+		}
+
+
+		public boolean gameUpdate(Rectangle kubus, Rectangle pikachu)
+		{
+			if(kubus.intersects(pikachu))
+			{
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public void keyPressed(KeyEvent e) {
+			boolean collission=false;
+			int keyCode = e.getKeyCode();
+			//	int A=(int) x/(3*rectsize);
+			if (gameover) {
+				if(keyCode==KeyEvent.VK_SPACE) {
+					c.posX=200;c.posY=500;
+					forward=true;
+				}
+
+
+			} else {
+
+
+				switch( keyCode ){
+
+				//	case if(gameworld[(int) x/(3*rectsize)].getSet()] 
+				case KeyEvent.VK_RIGHT :
+
+					if (testCollission(rCube,rCharacter) && forward){
+
+					}
+					else {
+						forward = true;
+						if(c.posX+rectsize < (getWidth()/3)){
+							c.move(10);
+						}
+						else{
+							x=x-10;
+						}
+
+					}
+					break;
+				case KeyEvent.VK_LEFT : 
+					if (testCollission(rCube,rCharacter) && !forward){
 
 
 					}
 					else {
-						//	g.setColor(Color.GREEN);
-						//	g.fillRect((3*i+k)*rectsize, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+						forward = false;
+						if(c.posX > (getWidth()/8)){
+							c.move(-10);
+						}
+						else{
+							x=x+10;
+						}
+					}
+
+					break;
+
+				case KeyEvent.VK_UP : 
+					if (testCollission(rCube,rCharacter)){
+						c.moveup(10);
+					}
+					break;
+				case KeyEvent.VK_DOWN: 
+					if (testCollission(rCube,rCharacter)){
+						c.moveup(-10);
 
 					}
+					break;
+				case KeyEvent.VK_D:
+					toggleDebug();
+					break;
 				}
+
+
 			}
-
+			repaint();
 		}
 
-		if(c.posY<0) {
-			gameover=true;
-
-			g.setColor(Color.WHITE);
-			g.fillRect(0, 0, getWidth(), getHeight());
-			g.setColor(Color.BLACK);
-			Font myFont = new Font ("Courier New", 1, 130);
-
-			g.setFont (myFont);
-
-			gravity=-0.5;
-			
-			//g.drawString("Game Over", c.posX+400, 500);
-			g.drawString("Game Over", 600, 500);
-			//	g.drawString("press space to restart", c.posX-100,800);
-			g.drawString("press space to restart",100,800);
-		}
-		else {
-			gameover=false;
-		}
-		
-		if(debug){
-			g.setColor(Color.black);
-			g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
-			g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
-			
-			Font debugFont = new Font ("Courier New", 1, 20);
-			g.setFont (debugFont);
-			
-			g.drawString("x: " +x, 10, 30);
-			g.drawString("c.posX: " +c.posX, 10, 50);
-			g.drawString("c.PosY: " +c.posY, 10, 70);
-			
-			
-		}
-
-	}
-	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
-	{
-		for(int i=0;i<rCube.size();i++) {
-			if(gameUpdate(rCube.get(i),rCharacter)) 
-			{
-				return true;
-			}
-
-		}
-		return false;
 
 
-	}
 
+		public void keyReleased(KeyEvent e) {
 
-	public boolean gameUpdate(Rectangle kubus, Rectangle pikachu)
-	{
-		if(kubus.intersects(pikachu))
-		{
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public void keyPressed(KeyEvent e) {
-		boolean collission=false;
-		int keyCode = e.getKeyCode();
-		//	int A=(int) x/(3*rectsize);
-		if (gameover) {
-			if(keyCode==KeyEvent.VK_SPACE) {
-				c.posX=200;c.posY=500;
-				forward=true;
-			}
-
-
-		} else {
-
+			int keyCode = e.getKeyCode();
 
 			switch( keyCode ){
+			case KeyEvent.VK_SPACE :
 
-			//	case if(gameworld[(int) x/(3*rectsize)].getSet()] 
-			case KeyEvent.VK_RIGHT :
-
-				if (testCollission(rCube,rCharacter) && forward){
-
-				}
-				else {
-					forward = true;
-					if(c.posX+rectsize < (getWidth()/3)){
-						c.move(10);
-					}
-					else{
-						x=x-10;
-					}
-					
-				}
-				break;
-			case KeyEvent.VK_LEFT : 
-				if (testCollission(rCube,rCharacter) && !forward){
-
-
-				}
-				else {
-					forward = false;
-					if(c.posX > (getWidth()/8)){
-						c.move(-10);
-					}
-					else{
-						x=x+10;
-					}
-				}
-
-				break;
-				
-			case KeyEvent.VK_UP : 
-				if (testCollission(rCube,rCharacter)){
-					c.moveup(10);
-				}
-			break;
-			case KeyEvent.VK_DOWN: 
-			if (testCollission(rCube,rCharacter)){
-				c.moveup(-10);
-				
+			{
+				jump = true;
 			}
-			break;
-			case KeyEvent.VK_D:
-				toggleDebug();
-			break;
 			}
 
-
 		}
-		repaint();
-	}
+		public void keyTyped(KeyEvent e) {}
 
 
-	
-
-	public void keyReleased(KeyEvent e) {
-
-		int keyCode = e.getKeyCode();
-
-		switch( keyCode ){
-		case KeyEvent.VK_SPACE :
-
-		{
-			jump = true;
-		}
-		}
 
 	}
-	public void keyTyped(KeyEvent e) {}
-
-
-
-}
