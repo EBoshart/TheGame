@@ -240,8 +240,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				}
 				
 				g.setColor(Color.green);
-				g.drawLine(0, c.posY, getWidth(), c.posY); //horizontale lijn
-				g.drawLine(c.posX, getHeight(), c.posX, getHeight()); //verticale lijn
+				g.drawLine(0, getHeight()-c.posY-(rectsize/2), getWidth(), getHeight()-c.posY-(rectsize/2)); //horizontale lijn
+				g.drawLine(c.posX+(rectsize/2), 0, c.posX+(rectsize/2), getHeight()); //verticale lijn
 				
 				g.setColor(Color.black);
 				g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
@@ -309,6 +309,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 				switch( keyCode ){
 
 				//	case if(gameworld[(int) x/(3*rectsize)].getSet()] 
+				case KeyEvent.VK_D :
 				case KeyEvent.VK_RIGHT :
 
 					if (testCollission(rCube,rCharacter) && forward){
@@ -326,6 +327,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 					}
 					break;
 				case KeyEvent.VK_LEFT : 
+				case KeyEvent.VK_A : 
 					if (testCollission(rCube,rCharacter) && !forward){
 
 
@@ -343,17 +345,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener{
 					break;
 
 				case KeyEvent.VK_UP : 
+				case KeyEvent.VK_W : 
 					if (testCollission(rCube,rCharacter)){
 						c.moveup(10);
 					}
 					break;
-				case KeyEvent.VK_DOWN: 
+				case KeyEvent.VK_DOWN : 
+				case KeyEvent.VK_S : 
 					if (testCollission(rCube,rCharacter)){
 						c.moveup(-10);
 
 					}
 					break;
-				case KeyEvent.VK_D:
+				case KeyEvent.VK_F12:
 					toggleDebug();
 					break;
 				}
