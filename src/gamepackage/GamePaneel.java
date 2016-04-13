@@ -16,6 +16,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -34,6 +36,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	double gravity = 0.5;
 	boolean gamefinished=false;
+
+	BufferedImage image0 = readimage("Sprites/tile1HD.png");
+	BufferedImage image1 = readimage("Sprites/tile2HD.png");
+
 
 	boolean debug = false;
 	DecimalFormat df = new DecimalFormat("#.##");
@@ -133,38 +139,52 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		rCharacter.setBounds(c.posX, getHeight() - size - c.posY, size + 10, size);
 
+
 		g.drawRect(c.posX, getHeight() - size - c.posY, size + 10, size);
 
 		int counter=0;
+
+
+
 		for (int i = 0; i < gameworld.length; i++) {
 
+
 			for (int j=0; j<gameworld[i].getSet().length;j++) {
+
 
 				for (int k=0;k<gameworld[i].getSet()[j].length;k++) {
 
 
 
+
 					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
 						Rectangle cube= new Rectangle();
+						BufferedImage img=null;
 
 						switch(gameworld[i].set) {
 						case 0: g.setColor(Color.BLACK);
+								img=image0;
 						break;
 						case 1: g.setColor(Color.RED);
+						img=image0;
 						break;
 						case 2: g.setColor(Color.GREEN);
-						break;
+						img=image0;
 						case 3: g.setColor(Color.BLUE);
+						img=image1;
 						break;
 						case 4: g.setColor(Color.MAGENTA);
+						img=image1;
 						break;
 						case 10: g.setColor(Color.DARK_GRAY);
+						img=image1;
 						break;
 						default: g.setColor(Color.YELLOW);
-
+						img=image1;
 						}
 						g.fillRect(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 						cube.setBounds(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
+					//	g.drawImage(img, ((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize, null);
 						rCube.add(cube);
 						g.setColor(Color.ORANGE);
 						g.drawRect(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
@@ -186,6 +206,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			Font myFont = new Font ("Courier New", 1, 130);
 
 			g.setFont (myFont);
+
 			g.drawString("Game Over", 600, 500);
 			g.drawString("press space to restart",100,800);
 		}
@@ -193,44 +214,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			gameover=false;
 		}
 
-		if(debug){
-
-			g.setColor(Color.orange);
-			for(int r=0;r<1000;r++){
-				g.drawLine(-100, getHeight()-(50*r), getWidth(), getHeight()-(50*r)); //horizontale lijn
-				g.drawLine((x+(50*r)-1000), 0, (x+(50*r)-1000), getHeight());	//verticale lijn
-			}
-
-			g.setColor(Color.green);
-			g.drawLine(0, getHeight()-c.posY-(rectsize/2), getWidth(), getHeight()-c.posY-(rectsize/2)); //horizontale lijn
-			g.drawLine(c.posX+(rectsize/2), 0, c.posX+(rectsize/2), getHeight()); //verticale lijn
-
-			g.setColor(Color.black);
-			g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
-			g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
-
-			Font debugFont = new Font ("Courier New", 1, 15);
-			g.setFont (debugFont);
-
-			int debugPos = 10;
-			int debugTextPos = 15;
-			g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("x: " +x, debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("c.posX: " +c.posX, debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("c.PosY: " +c.posY, debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Toon: Awesome", debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Gravity: " + df.format(gravity), debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
-		}
-		for(int i=rCube.size()-5; i< rCube.size();i++) {
-			if( gameUpdate(rCube.get(i), rCharacter)) {
+for(int i=rCube.size()-5; i< rCube.size();i++) {
+			
+			if(gameUpdate(rCube.get(i),rCharacter)) {
 				gamefinished = true;
-
-
-
-			}
+		}
 		}
 
 
@@ -251,11 +239,79 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("Game finished", 600, 500);
 			g.drawString("press space to restart", 100, 800);
 
+
 		} else {
 			gamefinished = false;
 		}
+	
 
-	}
+			if(debug){
+
+				// grid
+				g.setColor(Color.orange);
+				for(int r=0;r<1000;r++){
+					g.drawLine(-100, getHeight()-(50*r), getWidth(), getHeight()-(50*r)); //horizontale lijn
+					g.drawLine((x+(50*r)-1000), 0, (x+(50*r)-1000), getHeight());	//verticale lijn
+				}
+
+				// character middle
+				g.setColor(new Color(16,168,26));
+				g.drawLine(0, getHeight()-c.posY-(rectsize/2), getWidth(), getHeight()-c.posY-(rectsize/2)); //horizontale lijn
+				g.drawLine(c.posX+(rectsize/2), 0, c.posX+(rectsize/2), getHeight()); //verticale lijn
+
+				g.setColor(Color.BLUE);
+				g.drawLine(0, getHeight()-c.posY, getWidth(), getHeight()-c.posY);
+				g.drawLine(c.posX, 0, c.posX, getHeight());
+
+				// screen scroll boundaries
+				g.setColor(Color.black);
+				g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
+				g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
+
+				// character collision
+				g.drawRect(c.posX, getHeight() - size - c.posY, size + 10, size);
+
+				g.setColor(Color.black);
+				g.drawLine(getWidth()/3, 0, getWidth()/3, getHeight());
+				g.drawLine(getWidth()/8, 0, getWidth()/8, getHeight());
+
+				Font debugFont = new Font ("Courier New", 1, 15);
+				g.setFont (debugFont);
+
+				int debugPos = 10;
+				int debugTextPos = 15;
+				g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("x: " +x, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("c.posX: " +c.posX, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("c.PosY: " +c.posY, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Toon: Awesome", debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Gravity: " + df.format(gravity), debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
+				g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
+			}
+			// top left values
+			Font debugFont = new Font ("Courier New", 1, 15);
+			g.setFont (debugFont);
+			int debugPos = 10;
+			int debugTextPos = 15;
+			g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("x: " +x, debugPos, debugTextPos); debugTextPos += 15;
+			g.setColor(Color.BLUE);
+			g.drawString("c.posX: " +c.posX, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("c.PosY: " +c.posY, debugPos, debugTextPos); debugTextPos += 15;
+			g.setColor(new Color(16,168,26));
+			g.drawString("c.posX middle: " + (c.posX+(rectsize/2)), debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("c.PosY middle: " + (c.posY-(rectsize/2)), debugPos, debugTextPos); debugTextPos += 15;
+			g.setColor(Color.BLACK);
+			g.drawString("Toon: Awesome", debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Gravity: " + df.format(gravity), debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
+		}
+
+	
 	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
 	{
 		for(int i=0;i<rCube.size();i++) {
@@ -263,8 +319,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			{
 				return true;
 			}
+
 		}
 		return false;
+
+
 	}
 
 
@@ -272,6 +331,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	{
 		if(kubus.intersects(pikachu))
 		{
+
 			return true;
 		}
 		else
