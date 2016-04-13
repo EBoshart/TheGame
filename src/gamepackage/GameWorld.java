@@ -12,7 +12,7 @@ public class GameWorld {
 		Tileset[] gameWorld=new Tileset[worldSize];
 		double y=Math.random()*Tileset.numberOfTileSets;
 		int x=(int) y;
-		gameWorld[0]=new Tileset(x);
+		gameWorld[0]=new Tileset(1);
 		
 		for(int i=1;i<worldSize ;i++) {
 			y=  Math.random()*Tileset.numberOfTileSets;
@@ -21,6 +21,7 @@ public class GameWorld {
 			gameWorld[i]=new Tileset(x);
 			
 		}
+		gameWorld[worldSize-1]=new Tileset(10);
 		return gameWorld;
 	}
 }
