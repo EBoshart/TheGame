@@ -341,7 +341,7 @@ for(int i=rCube.size()-5; i< rCube.size();i++) {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		boolean collission=false;
+
 		int keyCode = e.getKeyCode();
 		if (gameover || gamefinished) {
 			if(keyCode==KeyEvent.VK_SPACE) {
