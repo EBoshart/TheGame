@@ -71,7 +71,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				}
 			}
 		}
-		
+
 		else if(direction <0){ //left
 			if (!(testCollission(rCube,rCharacter) && !forward)){
 				forward = false;
@@ -108,11 +108,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				if (jump) {
 					c.moveup(+gravity);
 					gravity += 0.1;
-		
+
 					if (gravity > 6) {
 						jump = false;
 					}
-		
+
 				}
 		 */
 		else{
@@ -132,7 +132,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		repaint();
 	}
-	
+
 	public BufferedImage readimage(String PATH) {
 		String path = PATH;
 		File file = new File(path);
@@ -190,10 +190,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 						}
 						g.fillRect(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 						cube.setBounds(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
-						g.drawImage(img, ((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize, null);
+						if(!debug){
+							g.drawImage(img, ((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize, null);
+						}
 						rCube.add(cube);
 						g.setColor(Color.ORANGE);
-						g.drawRect(((counter+k)*rectsize)+x, (getHeight()-rectsize*(j+1)), rectsize, rectsize);
 					}
 				}
 			}
@@ -302,7 +303,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		return false;
 	}
-	
+
 	public boolean gameUpdate(Rectangle kubus, Rectangle pikachu)
 	{
 		if(kubus.intersects(pikachu))
@@ -314,7 +315,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			return false;
 		}
 	}
-	
+
 	public void respawn(){
 		c.posX=200;c.posY=500;
 		forward=true;
