@@ -36,14 +36,26 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
 	int rectsize = 100;
+	long frameCounter = 0;
+	long time = System.currentTimeMillis();
+	int playTime = 0;
+	int fpsCounter =0;
+	int fpsOutput = 0;
 
 	double gravity = 0.5;
 	boolean gamefinished=false;
-	BufferedImage image = readimage("Sprites/pikachu.png");
+//	BufferedImage image = readimage("Sprites/pikachu.png");
 	BufferedImage image0 = readimage("Sprites/tile1HD.png");
-	BufferedImage image1 = readimage("Sprites/spriteT.png");
+
+	BufferedImage image1 = readimage("Sprites/tile2HD.png");
+	BufferedImage hero = readimage("Sprites/hero.png");
+	BufferedImage grass = readimage("Sprites/BG_grass.png");
+	BufferedImage sky = readimage("Sprites/BG_sky.png");
+
 
 	boolean debug = false;
+	boolean showFPS = false;
+
 	DecimalFormat df = new DecimalFormat("#.##");
 	int numberOfBosses;
 	//movements
@@ -52,7 +64,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean jump = false;
 	boolean forward = true;
 	boolean jumpAllowed = true;
+
 	boolean[] bossforward;
+
 
 	GamePaneel(int x, Tileset[] world, Character c) {
 		this.x = x;
@@ -125,7 +139,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 
-		//move right
+		// move right
 		if(moveRight){
 			move(10);
 		}
@@ -134,6 +148,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if(moveLeft){
 			move(-10);
 		}
+
 		for(int i=0;i<numberOfBosses;i++) {
 		rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 		if(testCollission(rCube,rBoss[i])) {
@@ -150,6 +165,18 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				boss[i].move(1);
 		}
 		}
+
+
+		// jump
+		if (jump) {
+			if(jumpAllowed){
+				c.moveup(-gravity + 15);
+				gravity += 0.1;
+			}
+		}
+
+		// collision check y
+
 		for (Rectangle cube : rCube) {
 			cube.y = (int) (cube.y - gravity);
 		}
@@ -172,6 +199,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else{
 			c.moveup(-gravity);
 			gravity += 0.1;
+			if(!jump && gravity > 1){
+				jumpAllowed = false;
+			}
 		}
 
 		for (Rectangle cube : rCube) {
@@ -180,12 +210,18 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		
 			
 
-		if (jump) {
-			if(jumpAllowed){
-				c.moveup(-gravity + 15);
-				gravity += 0.1;
-			}
+		frameCounter++;
+		long currentTime = System.currentTimeMillis();
+		if(playTime == (currentTime-time)/1000){
+			fpsCounter ++;
 		}
+		else{
+			fpsOutput = fpsCounter;
+			fpsCounter = 0;
+		}
+		playTime = (int) ((currentTime-time)/1000);
+
+
 		repaint();
 	}
 
@@ -205,18 +241,41 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void paintComponent(Graphics g) {
 		rCube.clear();
 
+
 		Graphics2D g2 = (Graphics2D) g;
+
+
 
 		super.paintComponent(g);
 		int size = rectsize;
-		if (forward) {
-			g2.drawImage(image, c.posX, getHeight() - size - c.posY, size, size, this);
 
-		} else {
-			g2.drawImage(image, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+		// parralax background
+		if(!debug){
+			int skyScrolling = x/3;
+			int grassScrolling = x/2;
+
+			for(int i=-1;i<2;i++){
+				g2.drawImage(sky, (skyScrolling)+(getWidth()*i), 0, getWidth(), (getHeight()/3)*2, this); //sky
+			}
+
+			for(int i=-1;i<3;i++){
+				g2.drawImage(grass, (grassScrolling)+(getWidth()*i), (getHeight()/3)*2, getWidth(), (getHeight()/3), this); //grass
+			}
 		}
+
+		// face character right way
+		if (forward) {
+			g2.drawImage(hero, c.posX, getHeight() - size - c.posY, size, size, this);
+		} 
+		else {
+			g2.drawImage(hero, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+		}
+
+		// character collision 
 		rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
-	//	rBoss.setBounds(boss.posX-10, getHeight() - size - boss.posY, size+20, size);
+
+
+
 		int counter=0;
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j=0; j<gameworld[i].getSet().length;j++) {
@@ -257,7 +316,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			counter+=gameworld[i].getSet()[0].length;
 		}
+
 		if(c.posY<0 || testCollission(rBoss,rCharacter)) {
+
+
+
 			gameover=true;
 		//	rBoss[0]=rCharacter;
 			g.setColor(Color.WHITE);
@@ -284,9 +347,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		if(gamefinished) {
 			gameover=true;
-			System.out.println(x);
-			System.out.println(c.posX);
-
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setColor(Color.BLACK);
@@ -296,18 +356,26 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.setFont(myFont);
 			g.drawString("Game finished", 600, 500);
 			g.drawString("press space to restart", 100, 800);
-
 		} else {
 			gamefinished = false;
 		}
 
-		if(debug){
+		Font debugFont = new Font ("Courier New", 1, 15);
+		g.setFont (debugFont);
+		g.setColor(Color.BLACK);
+		int debugPos = 10;
+		int debugTextPos = 15;
 
+		if(showFPS){
+			g.drawString("fps: " + fpsOutput, debugPos, debugTextPos); debugTextPos += 15;
+		}
+
+		if(debug){
 			// grid
 			g.setColor(Color.orange);
 			for(int r=0;r<1000;r++){
-				g.drawLine(-100, getHeight()-(50*r), getWidth(), getHeight()-(50*r)); //horizontale lijn
-				g.drawLine((x+(50*r)-1000), 0, (x+(50*r)-1000), getHeight());	//verticale lijn
+				g.drawLine(-100, getHeight()-(100*r), getWidth(), getHeight()-(100*r)); //horizontale lijn
+				g.drawLine((x+(100*r)-1000), 0, (x+(100*r)-1000), getHeight());	//verticale lijn
 			}
 
 			// character middle
@@ -329,10 +397,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawRect(c.posX -10, getHeight() - size - c.posY, size + 20, size);
 
 			// top left values
-			Font debugFont = new Font ("Courier New", 1, 15);
-			g.setFont (debugFont);
-			int debugPos = 10;
-			int debugTextPos = 15;
 			g.setColor(Color.ORANGE);
 			g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
@@ -346,9 +410,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("c.PosY middle: " + (c.posY-(rectsize/2)), debugPos, debugTextPos); debugTextPos += 15;
 			g.setColor(Color.BLACK);
 			g.drawString("Toon: Awesome", debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Gravity: " + df.format(gravity), debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
-			g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("JumpAllowed: " + jumpAllowed, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Frames: " + frameCounter, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Playtime: " + playTime, debugPos, debugTextPos); debugTextPos += 15;
 		}
 		for(int i=0;i<numberOfBosses;i++) {
 		g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
@@ -428,11 +495,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void respawn(){
-		c.posX=200;c.posY=500;
+		c.posX=100;c.posY=500;
 		forward=true;
 		gameworld=(new GameWorld()).getGameWorld();
 		gravity=0;
-		x=gameworld.length;
+		x=0;
 		gamefinished=false;
 	}
 
@@ -456,11 +523,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			case KeyEvent.VK_A :
 				moveLeft=true;
 				break;
-			case KeyEvent.VK_SPACE :
+			case KeyEvent.VK_SPACE:
 				jump=true;
 				break;
 			case KeyEvent.VK_F12 :
 				debug = !debug;
+				break;
+			case KeyEvent.VK_F11 :
+				showFPS = !showFPS;
 				break;
 			case KeyEvent.VK_R :
 				respawn();
