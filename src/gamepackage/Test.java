@@ -30,7 +30,7 @@ public class Test {
 	public static void main(String[] args){
 		// TODO Auto-generated method stub
 		JFrame frame = new JFrame("FrameDemo");
-		Character c = new Character(300,500);
+		Character c = new Character(100,500);
 		SoundClass sound = new SoundClass();
 		
 		frame.setSize(width, height);
