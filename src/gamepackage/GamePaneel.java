@@ -44,7 +44,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	boolean debug = false;
 	boolean showFPS = false;
-	
+
 	DecimalFormat df = new DecimalFormat("#.##");
 
 	//movements
@@ -146,7 +146,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (Rectangle cube : rCube) {
 			cube.y = (int) (cube.y + gravity);
 		}
-		
+
 		frameCounter++;
 		long currentTime = System.currentTimeMillis();
 		if(playTime == (currentTime-time)/1000){
@@ -157,7 +157,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			fpsCounter = 0;
 		}
 		playTime = (int) ((currentTime-time)/1000);
-		
+
 
 		repaint();
 	}
@@ -182,21 +182,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		Graphics2D g2 = (Graphics2D) g;
 		super.paintComponent(g);
 		int size = rectsize;
-		
+
 		// parralax background
 		if(!debug){
 			int skyScrolling = x/3;
 			int grassScrolling = x/2;
-			
+
 			for(int i=-1;i<2;i++){
 				g2.drawImage(sky, (skyScrolling)+(getWidth()*i), 0, getWidth(), (getHeight()/3)*2, this); //sky
 			}
-			
+
 			for(int i=-1;i<3;i++){
 				g2.drawImage(grass, (grassScrolling)+(getWidth()*i), (getHeight()/3)*2, getWidth(), (getHeight()/3), this); //grass
 			}
 		}
-		
+
 		// face character right way
 		if (forward) {
 			g2.drawImage(hero, c.posX, getHeight() - size - c.posY, size, size, this);
@@ -204,10 +204,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else {
 			g2.drawImage(hero, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		}
-		
+
 		// character collision 
 		rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
-		
+
 		int counter=0;
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j=0; j<gameworld[i].getSet().length;j++) {
@@ -248,7 +248,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			counter+=gameworld[i].getSet()[0].length;
 		}
-		
+
 		// game over
 		if(c.posY<0) {
 			gameover=true;
@@ -287,17 +287,17 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			gamefinished = false;
 		}
-		
+
 		Font debugFont = new Font ("Courier New", 1, 15);
 		g.setFont (debugFont);
 		g.setColor(Color.BLACK);
 		int debugPos = 10;
 		int debugTextPos = 15;
-		
+
 		if(showFPS){
 			g.drawString("fps: " + fpsOutput, debugPos, debugTextPos); debugTextPos += 15;
 		}
-		
+
 		if(debug){
 			// grid
 			g.setColor(Color.orange);
@@ -325,7 +325,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawRect(c.posX -10, getHeight() - size - c.posY, size + 20, size);
 
 			// top left values
-			
 			g.setColor(Color.ORANGE);
 			g.drawString("Window width: " +getWidth(), debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Window Height: " +getHeight(), debugPos, debugTextPos); debugTextPos += 15;
