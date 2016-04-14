@@ -14,35 +14,45 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.ListIterator;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
+	int index;
 	int x;
 	Tileset[] gameworld;
-	Character c;
+	
 	boolean gameover = true;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
+	
+	
+	Character[] boss;
+	Character c;
+	
+	Rectangle[] rBoss;
 	Rectangle rCharacter;
 	int rectsize = 100;
 
 	double gravity = 0.5;
 	boolean gamefinished=false;
-
+	BufferedImage image = readimage("Sprites/pikachu.png");
 	BufferedImage image0 = readimage("Sprites/tile1HD.png");
-	BufferedImage image1 = readimage("Sprites/tile2HD.png");
+	BufferedImage image1 = readimage("Sprites/spriteT.png");
 
 	boolean debug = false;
 	DecimalFormat df = new DecimalFormat("#.##");
-
+	int numberOfBosses;
 	//movements
 	boolean moveRight = false;
 	boolean moveLeft = false;
 	boolean jump = false;
 	boolean forward = true;
 	boolean jumpAllowed = true;
+	boolean[] bossforward;
 
 	GamePaneel(int x, Tileset[] world, Character c) {
 		this.x = x;
@@ -55,6 +65,23 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		Timer time = new Timer(10, this);
 		time.start();
 		rCharacter = new Rectangle();
+		 numberOfBosses=10;
+
+		
+		// rBoss=new Rectangle[numberOfBosses];
+		// boss= new Character[numberOfBosses];
+		 rBoss=new Rectangle[numberOfBosses];
+		 boss= new Character[numberOfBosses];
+		 bossforward=new boolean[numberOfBosses];
+		for(int i=0;i<numberOfBosses;i++) {
+		//	boss[i]=new Character((int) Math.random()*50000,(int) Math.random()*2000);
+			boss[i]=new Character((int) (Math.random()*300+1500),100+100*i);
+			rBoss[i]=new Rectangle();
+			
+			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+
+		}
+		//rBoss=new Rectangle(100,500,100,100);
 	}
 
 
@@ -65,9 +92,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 				if(c.posX+rectsize < (getWidth()/3)){
 					c.move(direction);
+					
 				}
 				else{
 					x=x-direction;
+					for(int i=0;i<numberOfBosses;i++) {
+					boss[i].move(-direction);
+					rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+					}
 				}
 			}
 		}
@@ -77,15 +109,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				forward = false;
 				if(c.posX > (getWidth()/8)){
 					c.move(direction);
+					
 				}
 				else{
 					x=x-direction;
+					for(int i=0;i<numberOfBosses;i++) {
+						boss[i].move(-direction);
+						rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+						}
 				}
 			}
 		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
+
 
 		//move right
 		if(moveRight){
@@ -96,10 +134,26 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if(moveLeft){
 			move(-10);
 		}
-
+		for(int i=0;i<numberOfBosses;i++) {
+		rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+		if(testCollission(rCube,rBoss[i])) {
+		//	System.out.println("test");
+			bossforward[i]=!bossforward[i];
+		}
+	//	System.out.println(i);
+	//	System.out.println(boss[i].posX);
+		if(bossforward[i]) {
+			boss[i].move(-1);
+				
+		}
+		else {
+				boss[i].move(1);
+		}
+		}
 		for (Rectangle cube : rCube) {
 			cube.y = (int) (cube.y - gravity);
 		}
+		
 
 		if (testCollission(rCube, rCharacter)) {
 			gravity = 0;
@@ -123,6 +177,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (Rectangle cube : rCube) {
 			cube.y = (int) (cube.y + gravity);
 		}
+		
+			
 
 		if (jump) {
 			if(jumpAllowed){
@@ -150,7 +206,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		rCube.clear();
 
 		Graphics2D g2 = (Graphics2D) g;
-		BufferedImage image = readimage("Sprites/pikachu.png");
+
 		super.paintComponent(g);
 		int size = rectsize;
 		if (forward) {
@@ -160,6 +216,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g2.drawImage(image, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		}
 		rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
+	//	rBoss.setBounds(boss.posX-10, getHeight() - size - boss.posY, size+20, size);
 		int counter=0;
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j=0; j<gameworld[i].getSet().length;j++) {
@@ -200,8 +257,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			counter+=gameworld[i].getSet()[0].length;
 		}
-		if(c.posY<0) {
+		if(c.posY<0 || testCollission(rBoss,rCharacter)) {
 			gameover=true;
+		//	rBoss[0]=rCharacter;
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setColor(Color.BLACK);
@@ -222,6 +280,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				gamefinished = true;
 			}
 		}
+		
 
 		if(gamefinished) {
 			gameover=true;
@@ -291,18 +350,70 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("Jump: " + jump, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Forward: " + forward, debugPos, debugTextPos); debugTextPos += 15;
 		}
+		for(int i=0;i<numberOfBosses;i++) {
+		g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
+	
+		}
 	}
 
 	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
 	{
-		for(int i=0;i<rCube.size();i++) {
-			if(gameUpdate(rCube.get(i),rCharacter)) 
+		for(int i=0;i<rectanglearraylist.size();i++) {
+			if(gameUpdate(rectanglearraylist.get(i),pikachu)) 
 			{
+
+				index=i;
+				deleteTile(index);
 				return true;
+
 			}
 		}
 		return false;
 	}
+	public boolean testCollission(Rectangle[] rekt, Rectangle pikachu)
+	{
+		for(int i=0;i<rekt.length;i++) {
+			if(gameUpdate(rekt[i],pikachu)) 
+			{
+
+				index=i;
+				deleteTile(index);
+				return true;
+
+			}
+		}
+		return false;
+	}
+
+
+	public void deleteTile(int index) {
+		int sum = 0;
+		for (int i = 0; i < gameworld.length; i++) {
+	
+			//		System.out.println(sum);
+			if  (sum+gameworld[i].numberoftiles > index) {
+				//System.out.println(index+ " "+ sum);
+				for (int j=0; j<gameworld[i].numberoftiles;j++) {
+					if(index==sum+j) {
+						//	System.out.println("sum="+(index+i+j));
+						//	gameworld[i].tileset[j][k]=new Tile("empty");
+					gameworld[i].tileset= new Tile[][]{{new Tile("empty")}};
+				//	gameworld[i].tileset
+						//System.out.println("test");
+						//	gameworld[i]=null;
+						//	System.out.println(gameworld[i].tileset[j][k]);
+					return;
+					}
+				}
+			} else {
+				sum=sum+gameworld[i].numberoftiles;
+			}
+		}
+		
+	}
+
+
+
 
 	public boolean gameUpdate(Rectangle kubus, Rectangle pikachu)
 	{
