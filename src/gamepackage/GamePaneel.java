@@ -122,7 +122,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					x=x-direction;
 					for(int i=0;i<numberOfBosses;i++) {
 						boss[i].move(-direction);
-						rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+					//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 					}
 				}
 			}
@@ -139,7 +139,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					x=x-direction;
 					for(int i=0;i<numberOfBosses;i++) {
 						boss[i].move(-direction);
-						rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+					//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 					}
 				}
 			}
@@ -172,12 +172,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 		///////////////////////////////
-/*		for(int i=0;i<numberOfBosses;i++) {
-			double oldgravity=bossgravity[i];
-			for (Rectangle cube : rCube) {
-				cube.y = (int) (cube.y - oldgravity);
-			}
-			if(testCollission(rCube,rBoss[i])) {
+
+	/*	for(int i=0;i<numberOfBosses;i++) {
+		
+			
+			if(testCollission(rCube,rBoss[i],bossgravity[i])) {
 				bossgravity[i] = 0;
 			}
 			else{
@@ -185,19 +184,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				bossgravity[i] += 0.1;
 
 			}
-			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100+20, 100);
-			for (Rectangle cube : rCube) {
-				cube.y = (int) (cube.y + oldgravity);
-			}
+		
 		}*/
+	
 		///////////////////////////////
 		// collision check y
-		for (Rectangle cube : rCube) {
-			cube.y = (int) (cube.y - gravity);
-		}
+		double oldgravity=gravity;
+		/*for (Rectangle cube : rCube) {
+			
+			cube.y = (int) (cube.y - oldgravity);
+		}*/
 
 
-		if (testCollission(rCube, rCharacter)) {
+		if (testCollission(rCube, rCharacter,gravity)) {
 			gravity = 0;
 			jumpAllowed = true;	}
 		/* bounce functie
@@ -220,9 +219,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 
-		for (Rectangle cube : rCube) {
-			cube.y = (int) (cube.y + gravity);
-		}
+		/*for (Rectangle cube : rCube) {
+			cube.y = (int) (cube.y + oldgravity);
+		}*/
 		for(int i=0;i<numberOfBosses;i++) {
 
 			if(testCollission(rCube,rBoss[i])) {
@@ -236,7 +235,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			else {
 				boss[i].move(1);
 			}
-			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100+20, 100);
+		//	rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100+20, 100);
 		}
 
 
@@ -310,7 +309,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		// character collision 
 		rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
-
+		for(int i=0;i<numberOfBosses;i++) {
+			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+		}
 
 
 		int counter=0;
@@ -465,7 +466,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			{
 
 				index=i;
-				deleteTile(index);
+			//	deleteTile(index);
 				return true;
 
 			}
@@ -479,13 +480,34 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			{
 
 				index=i;
-				deleteTile(index);
+			//	deleteTile(index);
 				return true;
 
 			}
 		}
 		return false;
 	}
+	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu,double gravity)
+	{
+		ArrayList<Rectangle> x=new ArrayList<>();
+		x.addAll(rectanglearraylist);
+		for(Rectangle bla: x){
+			bla.y=(int) (bla.y-gravity);
+	}
+		
+		for(int i=0;i<rectanglearraylist.size();i++) {
+			if(gameUpdate(rectanglearraylist.get(i),pikachu)) 
+			{
+
+			//	index=i;
+			//deleteTile(index);
+				return true;
+
+			}
+		}
+		return false;
+	}
+
 
 
 	public void deleteTile(int index) {
