@@ -31,7 +31,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gameover = true;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
-	public Image currentSprite, w0, w1, w2, w3, w4, w5, w6, w7;
+	public Image currentSprite, standaard, w0, w1, w2, w3, w4, w5, w6, w7;
 	Walker anim;
 	
 	Character[] boss;
@@ -88,6 +88,22 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		rCharacter = new Rectangle();
 		numberOfBosses=100;
 
+		// rBoss=new Rectangle[numberOfBosses];
+		// boss= new Character[numberOfBosses];
+		rBoss=new Rectangle[numberOfBosses];
+		boss= new Character[numberOfBosses];
+		bossforward=new boolean[numberOfBosses];
+		bossgravity=new double[numberOfBosses];
+		for(int i=0;i<numberOfBosses;i++) {
+			//	boss[i]=new Character((int) Math.random()*50000,(int) Math.random()*2000);
+			boss[i]=new Character((int) (Math.random()*10000+1000),(int) (Math.random()*1600));
+			rBoss[i]=new Rectangle();
+
+			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+
+		}
+		
+		standaard = readimage("Sprites/default.png");
 		w1 = readimage("Sprites/0.png");
 		w2 = readimage("Sprites/1.png");
 		w3 = readimage("Sprites/2.png");
@@ -106,21 +122,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		anim.addFrame(w7, 50);
 		
 		currentSprite = anim.getImage();
-
-		// rBoss=new Rectangle[numberOfBosses];
-		// boss= new Character[numberOfBosses];
-		rBoss=new Rectangle[numberOfBosses];
-		boss= new Character[numberOfBosses];
-		bossforward=new boolean[numberOfBosses];
-		bossgravity=new double[numberOfBosses];
-		for(int i=0;i<numberOfBosses;i++) {
-			//	boss[i]=new Character((int) Math.random()*50000,(int) Math.random()*2000);
-			boss[i]=new Character((int) (Math.random()*10000+1000),(int) (Math.random()*1600));
-			rBoss[i]=new Rectangle();
-
-			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
-
-		}
 		//rBoss=new Rectangle(100,500,100,100);
 	}
 
@@ -163,11 +164,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
-	public void animate()
-	{
-		anim.update(100);
-	}
-	
 	public void actionPerformed(ActionEvent e) {
 
 
@@ -182,7 +178,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		// charizard side movement
 
-
+		if(!moveRight && !moveLeft)
+		{
+			
+		}
 
 		// jump
 		if (jump) {
@@ -290,6 +289,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		return image;
 	}
+	
+	public void animate()
+	{
+		anim.update(20);
+	}
 
 	public void paintComponent(Graphics g) {
 		rCube.clear();
@@ -318,11 +322,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		// face character right way
 		if (forward) {
-			g2.drawImage(currentSprite, c.posX, getHeight() - size - c.posY, size, size, this);
+			g.drawImage(currentSprite = anim.getImage(), c.posX, getHeight() - size - c.posY, size, size, this);
 		} 
 		else {
-			g2.drawImage(currentSprite, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		}
+		if(!moveRight && !moveLeft)
+		{
+			g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
+		}
+		
 		for(int i=0;i<numberOfBosses;i++) {
 			//	g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
 			g.drawRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
