@@ -31,11 +31,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gameover = true;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
-	//public Image currentSprite, w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13;
-
-
-
-
+	public Image currentSprite, w0, w1, w2, w3, w4, w5, w6, w7;
+	Walker anim;
+	
 	Character[] boss;
 	Character c;
 
@@ -90,6 +88,24 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		rCharacter = new Rectangle();
 		numberOfBosses=100;
 
+		w1 = readimage("Sprites/0.png");
+		w2 = readimage("Sprites/1.png");
+		w3 = readimage("Sprites/2.png");
+		w4 = readimage("Sprites/3.png");
+		w5 = readimage("Sprites/4.png");
+		w6 = readimage("Sprites/5.png");
+		w7 = readimage("Sprites/6.png");
+
+		anim = new Walker();
+		anim.addFrame(w1, 50);
+		anim.addFrame(w2, 50);
+		anim.addFrame(w3, 50);
+		anim.addFrame(w4, 50);
+		anim.addFrame(w5, 50);
+		anim.addFrame(w6, 50);
+		anim.addFrame(w7, 50);
+		
+		currentSprite = anim.getImage();
 
 		// rBoss=new Rectangle[numberOfBosses];
 		// boss= new Character[numberOfBosses];
@@ -110,6 +126,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 	public void move(int direction){
+		animate();
 		if(direction > 0){ //right
 			if (!(testCollission(rCube,rCharacter) && forward)){
 				forward = true;
@@ -146,6 +163,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
+	public void animate()
+	{
+		anim.update(100);
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 
 
@@ -296,10 +318,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		// face character right way
 		if (forward) {
-			g2.drawImage(hero, c.posX, getHeight() - size - c.posY, size, size, this);
+			g2.drawImage(currentSprite, c.posX, getHeight() - size - c.posY, size, size, this);
 		} 
 		else {
-			g2.drawImage(hero, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			g2.drawImage(currentSprite, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		}
 		for(int i=0;i<numberOfBosses;i++) {
 			//	g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
