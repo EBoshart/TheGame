@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import animate.Walker;
+
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	int index;
 	int x;
@@ -28,7 +31,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gameover = true;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
+	//public Image currentSprite, w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13;
 	
+
+
 	
 	Character[] boss;
 	Character c;
@@ -51,6 +57,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage hero = readimage("Sprites/hero.png");
 	BufferedImage grass = readimage("Sprites/BG_grass.png");
 	BufferedImage sky = readimage("Sprites/BG_sky.png");
+	BufferedImage charizard=readimage("Sprites/charizard2.png");
 
 
 	boolean debug = false;
@@ -66,6 +73,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean jumpAllowed = true;
 
 	boolean[] bossforward;
+	
+	
 
 
 	GamePaneel(int x, Tileset[] world, Character c) {
@@ -79,7 +88,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		Timer time = new Timer(10, this);
 		time.start();
 		rCharacter = new Rectangle();
-		 numberOfBosses=10;
+		 numberOfBosses=100;
 
 		
 		// rBoss=new Rectangle[numberOfBosses];
@@ -89,7 +98,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		 bossforward=new boolean[numberOfBosses];
 		for(int i=0;i<numberOfBosses;i++) {
 		//	boss[i]=new Character((int) Math.random()*50000,(int) Math.random()*2000);
-			boss[i]=new Character((int) (Math.random()*300+1500),100+100*i);
+			boss[i]=new Character((int) (Math.random()*10000+200),(int) (Math.random()*1600));
 			rBoss[i]=new Rectangle();
 			
 			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
@@ -270,6 +279,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else {
 			g2.drawImage(hero, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		}
+		for(int i=0;i<numberOfBosses;i++) {
+			//	g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
+				g.drawImage(charizard, boss[i].posX, getHeight()-size-boss[i].posY, size, size, null);
+			
+				}
 
 		// character collision 
 		rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
@@ -319,9 +333,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		if(c.posY<0 || testCollission(rBoss,rCharacter)) {
 
-
-
 			gameover=true;
+
+		
+			rectsize=0;
 		//	rBoss[0]=rCharacter;
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
@@ -417,10 +432,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("Frames: " + frameCounter, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Playtime: " + playTime, debugPos, debugTextPos); debugTextPos += 15;
 		}
-		for(int i=0;i<numberOfBosses;i++) {
-		g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
-	
-		}
+		
 	}
 
 	public boolean testCollission(ArrayList<Rectangle> rectanglearraylist, Rectangle pikachu)
@@ -509,6 +521,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		if (gameover) {
 			if(keyCode==KeyEvent.VK_SPACE) {
+				rectsize=100;
 				respawn();
 			}
 		} 
