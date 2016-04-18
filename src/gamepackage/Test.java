@@ -24,7 +24,7 @@ public class Test{
 		//frame.getContentPane().add(c.createCharacter());
 		frame.add(new GamePaneel(0,getworld,c));
 		
-		sound.PlaySound();
+		//sound.PlaySound();
 		
 		frame.setVisible(true);
 		

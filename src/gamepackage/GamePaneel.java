@@ -33,7 +33,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	public Image currentSprite, standaard, w0, w1, w2, w3, w4, w5, w6, w7;
 	Walker anim;
-	
+
 	Character[] boss;
 	Character c;
 
@@ -70,6 +70,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean forward = true;
 	boolean jumpAllowed = true;
 
+	ArrayList<Integer> movementKeys = new ArrayList<Integer>();
+	ArrayList<Long> movementFrames = new ArrayList<Long>();
+
 	boolean[] bossforward;
 	double[] bossgravity;
 
@@ -102,7 +105,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 
 		}
-		
+
 		standaard = readimage("Sprites/default.png");
 		w1 = readimage("Sprites/0.png");
 		w2 = readimage("Sprites/1.png");
@@ -120,7 +123,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		anim.addFrame(w5, 50);
 		anim.addFrame(w6, 50);
 		anim.addFrame(w7, 50);
-		
+
 		currentSprite = anim.getImage();
 		//rBoss=new Rectangle(100,500,100,100);
 	}
@@ -140,7 +143,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					x=x-direction;
 					for(int i=0;i<numberOfBosses;i++) {
 						boss[i].move(-direction);
-					//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+						//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 					}
 				}
 			}
@@ -157,7 +160,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					x=x-direction;
 					for(int i=0;i<numberOfBosses;i++) {
 						boss[i].move(-direction);
-					//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
+						//	rBoss[i].setBounds(boss[i].posX-10, getHeight() - 100 - boss[i].posY, 100+20, 100);
 					}
 				}
 			}
@@ -180,7 +183,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		if(!moveRight && !moveLeft)
 		{
-			
+
 		}
 
 		// jump
@@ -194,9 +197,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		///////////////////////////////
 
-	/*	for(int i=0;i<numberOfBosses;i++) {
-		
-			
+		/*	for(int i=0;i<numberOfBosses;i++) {
+
+
 			if(testCollission(rCube,rBoss[i],bossgravity[i])) {
 				bossgravity[i] = 0;
 			}
@@ -205,14 +208,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				bossgravity[i] += 0.1;
 
 			}
-		
+
 		}*/
-	
+
 		///////////////////////////////
 		// collision check y
 		double oldgravity=gravity;
 		/*for (Rectangle cube : rCube) {
-			
+
 			cube.y = (int) (cube.y - oldgravity);
 		}*/
 
@@ -256,7 +259,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			else {
 				boss[i].move(1);
 			}
-		//	rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100+20, 100);
+			//	rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100+20, 100);
 		}
 
 
@@ -288,7 +291,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		return image;
 	}
-	
+
 	public void animate()
 	{
 		anim.update(20);
@@ -330,7 +333,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		{
 			g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
 		}
-		
+
 		for(int i=0;i<numberOfBosses;i++) {
 			//	g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
 			g.drawRect(boss[i].posX, getHeight()-size-boss[i].posY, size, size);
@@ -486,6 +489,30 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("JumpAllowed: " + jumpAllowed, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Frames: " + frameCounter, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Playtime: " + playTime, debugPos, debugTextPos); debugTextPos += 15;
+
+			// movement input 
+			int movXPos = getWidth()-120;
+			int movYPos = 0;
+			for(int i=0; i<movementKeys.size(); i++){
+				g.drawString(movementFrames.get(i) + " : " + keyEventToString(movementKeys.get(i)), movXPos, movYPos+(movementFrames.size()*15));
+				movYPos-=15;
+			}
+		}
+	}
+
+	// part of debug
+	public String keyEventToString(int key){
+		switch(key){
+		case 68 :
+		case 39 :
+			return "right";
+		case 65 :
+		case 37 :
+			return "left";
+		case 32 :
+			return "jump";
+		default :
+			return ""+key;
 		}
 
 	}
@@ -497,7 +524,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			{
 
 				index=i;
-			//	deleteTile(index);
+				//	deleteTile(index);
 				return true;
 
 			}
@@ -511,7 +538,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			{
 
 				index=i;
-			//	deleteTile(index);
+				//	deleteTile(index);
 				return true;
 
 			}
@@ -524,14 +551,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		x.addAll(rectanglearraylist);
 		for(Rectangle bla: x){
 			bla.y=(int) (bla.y-gravity);
-	}
-		
+		}
+
 		for(int i=0;i<rectanglearraylist.size();i++) {
 			if(gameUpdate(rectanglearraylist.get(i),pikachu)) 
 			{
 
-			//	index=i;
-			//deleteTile(index);
+				//	index=i;
+				//deleteTile(index);
 				return true;
 
 			}
@@ -591,9 +618,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		gamefinished=false;
 	}
 
+	public void addMovements(int key, long frame){
+		if(
+				(key==KeyEvent.VK_SPACE && jump == false) || 
+				(((key==KeyEvent.VK_RIGHT) || (key==KeyEvent.VK_D)) && moveRight == false) ||
+				(((key==KeyEvent.VK_LEFT) || (key==KeyEvent.VK_A)) && moveLeft == false)){
+			movementKeys.add(key);
+			movementFrames.add(frame);
+		}
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
+		addMovements(keyCode, frameCounter);
+
 
 		if (gameover) {
 			if(keyCode==KeyEvent.VK_SPACE) {
@@ -623,6 +662,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				break;
 			case KeyEvent.VK_R :
 				respawn();
+			case KeyEvent.VK_P :
+				System.out.println(movementKeys); 
 			}
 		}
 	}
@@ -642,6 +683,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_SPACE :
 			jump=false;
 		}
+
+		addMovements(keyCode, frameCounter);
 	}
 
 	@Override
