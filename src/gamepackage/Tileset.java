@@ -14,15 +14,33 @@ final static int numberOfTileSets=6;
 	
 	switch(set) {
 
-	case 1:   numberoftiles=4;return this.tileset=new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
-	case 2:  numberoftiles=9; return this.tileset= new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("solid"),new Tile("solid"),new Tile("solid")},{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
-	case 3:  numberoftiles=1; return this.tileset= new Tile[][]{{new Tile("emty"),new Tile("empty"),new Tile("solid")}, {new Tile("empty"),new Tile("empty"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
-	case 4:   numberoftiles=6; return this.tileset= new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("solid")},{new Tile("empty"),new Tile("empty"),new Tile("solid")}};
-	case 10:   numberoftiles=5;return this.tileset= new Tile[][]{{new Tile("solid"),new Tile("empty"),new Tile("solid")}, {new Tile("empty"),new Tile("solid"),new Tile("empty")},{new Tile("solid"),new Tile("empty"),new Tile("solid")}};
-	case 5:  numberoftiles=10; return this.tileset= new Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("solid")},{new Tile("solid")},{new Tile("solid")},{new Tile("solid")},{new Tile("solid")},{new Tile("solid")}};
+	case 1:   numberoftiles=4;return this.tileset=new Tile[][]{
+		{new Tile("solid"),new Tile("solid"),new Tile("solid"),new Tile("solid")}, 
+		{new Tile("empty"),new Tile("solid"),new Tile("solid"),new Tile("empty")},
+		{new Tile("empty"),new Tile("empty"),new Tile("empty"),new Tile("empty")}};
+		
+	case 2:  numberoftiles=9; return this.tileset= new Tile[][]{
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")}, 
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")},
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
+		
+	case 3:  numberoftiles=1; return this.tileset= new Tile[][]{
+		{new Tile("emty"),new Tile("empty"),new Tile("solid")}, 
+		{new Tile("empty"),new Tile("empty"),new Tile("empty")},
+		{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
+		
+	case 4:   numberoftiles=6; return this.tileset= new Tile[][]{
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")}, 
+		{new Tile("empty"),new Tile("solid"),new Tile("solid")},
+		{new Tile("empty"),new Tile("empty"),new Tile("solid")}};
+		
+		//finish line
+	case 10:   numberoftiles=3;return this.tileset= new Tile[][]{
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
 
-
-	default: numberoftiles=3; return this.tileset= new  Tile[][]{{new Tile("solid"),new Tile("solid"),new Tile("solid")}, {new Tile("empty"),new Tile("empty"),new Tile("empty")},{new Tile("empty"),new Tile("empty"),new Tile("empty")}};
+		//flat tile
+	default: numberoftiles=3; return this.tileset= new  Tile[][]{
+		{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
 	}
 	
 	}
