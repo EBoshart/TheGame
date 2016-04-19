@@ -172,7 +172,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if (moveLeft) {
 			move(-10);
 		}
-	
+
 
 		// jump
 		if (jump) {
@@ -220,8 +220,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		 */
 
 		///////////////////////////////
-//		// collision check y
-//		double oldgravity = gravity;
+		//		// collision check y
+		//		double oldgravity = gravity;
 		/*
 		 * for (Rectangle cube : rCube) {
 		 * 
@@ -321,21 +321,29 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 		// face character right way
-		if (!moveRight && !moveLeft && forward && !jump) {
+		if (!moveRight && !moveLeft && forward && !jump && jumpAllowed) {
 			g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
 		}
 
-		
-	
-		else if ( jump &&forward) {
-				g.drawImage(currentSprite = j1, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
-			}
-	
-		
-		else if ( jump && !forward) {
+
+
+		else if (jump &&forward) {
+			g.drawImage(currentSprite = j1, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+		}
+
+
+		else if (jump && !forward) {
 			g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
-			}
-		
+		}
+
+		else if (!jumpAllowed && !jump && forward) {
+			g.drawImage(currentSprite = j2, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+		}
+
+		else if (!jumpAllowed && !jump && !forward) {
+			g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+		}
+
 		else if (!moveRight && !moveLeft && !forward) {
 			g.drawImage(currentSprite = standaard, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 		} else if (forward) {
@@ -522,7 +530,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 			// movement input 
 			int movXPos = getWidth()-120;
-			int movYPos = 0;
+			int movYPos = 15;
+			g.drawString("frame / input", movXPos-15, movYPos);
 			for(int i=0; i<movementKeys.size(); i++){
 				g.drawString(movementFrames.get(i) + " : " + keyEventToString(movementKeys.get(i)), movXPos, movYPos+(movementFrames.size()*15));
 				movYPos-=15;
@@ -560,7 +569,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		return false;
 	}
 
-	
+
 
 	public boolean testCollission(Rectangle[] rekt, Rectangle pikachu) {
 		for (int i = 0; i < rekt.length; i++) {
@@ -579,7 +588,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		ArrayList<Rectangle> x = new ArrayList<>();
 		x.addAll(rectanglearraylist);
 
-		
+
 
 		for (Rectangle bla : x) {
 			bla.y = (int) (bla.y - gravity);
@@ -686,8 +695,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				break;
 			case KeyEvent.VK_R:
 				respawn();
-			case KeyEvent.VK_P :
-				System.out.println(movementKeys); 
 			}
 		}
 	}
