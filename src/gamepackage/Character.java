@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.sun.javafx.geom.Rectangle;
+
 
 import javax.swing.*;
 
@@ -20,7 +20,7 @@ public class Character extends JPanel{
 	
 	int posX;
 	int posY;
-	public static Rectangle rekt = new Rectangle(0, 0, 0, 0);
+	
 	
 
 	
