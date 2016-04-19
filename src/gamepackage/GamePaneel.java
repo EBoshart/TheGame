@@ -184,9 +184,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 
-		/*if(rBullet.width!=0) {
+		if(rBullet.width!=0) {
 			bullet.move(10);
-		}*/
+		}
 
 		// move right
 		if (moveRight) {
@@ -337,23 +337,27 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		
 
 		playTime = (int) ((currentTime-time)/1000);
-	/*	outer:
+		outer:
 		for(int i=0;i<numberOfBosses;i++) {
 			
 			if(gameUpdate(rBoss[i],rBullet)) {
 				//System.out.println(number);
-			//	System.out.println(i);
+				System.out.println(i);
 				numberOfBosses--;
 				Rectangle[] X= new Rectangle[numberOfBosses];
+				Character[] Y = new Character[numberOfBosses];
+				
 				for (int j=0;j<numberOfBosses;j++) {
 					if(j!=i) {
+						Y[j]=new Character(boss[i].posX,boss[i].posY);	
 					X[j]=new Rectangle(rBoss[i].x,rBoss[i].y,100,100);
 					}
 				}
 				rBoss=X;
+				boss = Y;
 				break outer;
 			}
-		}*/
+		}
 
 
 
@@ -856,9 +860,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			case KeyEvent.VK_R:
 				respawn();
 			    break;
-	/*		case KeyEvent.VK_UP : 
+			case KeyEvent.VK_UP : 
 			case KeyEvent.VK_W :
-				shoot(rCharacter);*/
+				shoot(rCharacter);
 
 			case KeyEvent.VK_P :
 				System.out.println(movementKeys); 
