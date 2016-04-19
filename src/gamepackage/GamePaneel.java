@@ -18,11 +18,11 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import animate.Walker;
 
@@ -34,15 +34,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gameover = false;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
-	public Image currentSprite, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2;
+	public Image currentSprite,currentSprite2, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2,standaard2, W0, W1, W2, W3, W4, W5, W6, W7, J1, J2;
 	Walker anim;
-
+	Walker anim2;
+	private int default_time = 1500;
+	private int timebullet = 0;
 	Character[] boss;
 	Character c;
 	Character bullet;
+	Character cpowerup;
+
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
-
+	Rectangle rpowerup;
+	int bulletWidth=268/85*30;
+	int bulletHeight=188/85*30;
 	int rectsize = 100;
 	long frameCounter = 0;
 	long startTime = System.currentTimeMillis();
@@ -61,7 +67,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage grass = readimage("Sprites/BG_grass.png");
 	BufferedImage sky = readimage("Sprites/BG_sky.png");
 	BufferedImage charizard = readimage("Sprites/charizard2.png");
-
+	BufferedImage bulletbill =readimage("Sprites/bulletbill.jpg");
+	BufferedImage powerupimg=readimage("Sprites/powerup.jpg");
 	boolean debug = false;
 	boolean showFPS = false;
 
@@ -75,17 +82,24 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean jumpAllowed = true;
 	int movementSpeed = 8;
 
+	boolean bulletforward=true;
+	boolean shooting =false;
 	ArrayList<Integer> movementKeys = new ArrayList<Integer>();
 	ArrayList<Long> movementFrames = new ArrayList<Long>();
-
+	ArrayList<Rectangle> rBullet2=new ArrayList<>();
+	ArrayList<Character> bullet2=new ArrayList<>();
+	ArrayList<Boolean> bulletforward2 =new ArrayList<>();
 	boolean[] bossforward;
 	double[] bossgravity;
-
-	Rectangle rBullet=new Rectangle(0,0,0,0);
+	boolean powerup=false;
 
 
 	Timer time = new Timer(10, this);
 	boolean paused = false;
+
+	int X=1;
+	int poweruptimer;
+
 
 	GamePaneel(int x, Tileset[] world, Character c) {
 		this.x = x;
@@ -97,7 +111,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		requestFocus();
 		time.start();
 		rCharacter = new Rectangle();
-
+		numberOfBosses = X;
+		rpowerup=new Rectangle(0,0,0,0);
+		cpowerup=new Character(0,0);
 		// rBoss=new Rectangle[numberOfBosses];
 		// boss= new Character[numberOfBosses];
 
@@ -107,17 +123,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		bossforward=new boolean[numberOfBosses];
 		bossgravity=new double[numberOfBosses];
 		spawncharizards();
-
-
-
-
-
-
-
-
-
-
-
+		spawnpowerup();
 
 		standaard = readimage("Sprites/default.png");
 		w1 = readimage("Sprites/0.png");
@@ -129,6 +135,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		w7 = readimage("Sprites/6.png");
 		j1 = readimage("Sprites/j1.png");
 		j2 = readimage("Sprites/j2.png");
+		standaard2 = readimage("Sprites/defaultn.png");
+		W1 = readimage("Sprites/0n.png");
+		W2 = readimage("Sprites/1n.png");
+		W3 = readimage("Sprites/2n.png");
+		W4 = readimage("Sprites/3n.png");
+		W5 = readimage("Sprites/4n.png");
+		W6 = readimage("Sprites/5n.png");
+		W7 = readimage("Sprites/6n.png");
+		J1 = readimage("Sprites/j1n.png");
+		J2 = readimage("Sprites/j2n.png");
 
 		anim = new Walker();
 		anim.addFrame(w1, 50);
@@ -139,6 +155,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		anim.addFrame(w6, 50);
 		anim.addFrame(w7, 50);
 
+		anim2 = new Walker();
+		anim2.addFrame(W1, 50);
+		anim2.addFrame(W2, 50);
+		anim2.addFrame(W3, 50);
+		anim2.addFrame(W4, 50);
+		anim2.addFrame(W5, 50);
+		anim2.addFrame(W6, 50);
+		anim2.addFrame(W7, 50);
+		currentSprite2=anim2.getImage();
 		currentSprite = anim.getImage();
 	}
 
@@ -156,6 +181,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				else{
 					x=x-direction;
 					bullet.move(-direction);
+					cpowerup.move(-direction);
+
 					for(int i=0;i<numberOfBosses;i++) {
 
 						boss[i].move(-direction);
@@ -176,6 +203,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				else{
 					x=x-direction;
 					bullet.move(-direction);
+					cpowerup.move(-direction);
+
 					for(int i=0;i<numberOfBosses;i++) {
 
 
@@ -195,9 +224,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			showGameOverDialog();
 		}
 
-		/*if(rBullet.width!=0) {
-			bullet.move(10);
-		}*/
+
+
+
+		for(int i=0;i<rBullet2.size();i++) {
+			System.out.println(rBullet2.size());
+			if(bulletforward2.get(i)) 
+				bullet2.get(i).move(10);
+			else
+				bullet2.get(i).move(-10);
+
+
+
+		}
 
 		if (testCollission(rCube, rCharacter, true ) && moveRight) {
 
@@ -225,15 +264,28 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		// jump
 		if (jump) {
 			if (jumpAllowed) {
-				c.moveup(-gravity + 15);
+				if(!powerup) 
+					c.moveup(-gravity + 15);
+				else
+					c.moveup(-gravity+45);
 				gravity += 0.1;
 			}
 		}
 
+		if(gameUpdate(rCharacter,rpowerup)) {
+			powerup=true;
+			poweruptimer=0;
+		}
+		poweruptimer++;
+		if(poweruptimer>250) {
+			powerup=false;
+		}
+		timebullet+=50;
 
-
-		///////////////////////////////
-
+		if(shooting && timebullet > default_time) {
+			timebullet=0; 
+			shoot2(rCharacter);
+		}
 
 		for(int i=0;i<numberOfBosses/2;i++) {
 
@@ -248,35 +300,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			else{
 				boss[i].moveup(-bossgravity[i]);
 				bossgravity[i] += 0.1;
-
 			}
-
-
 		}
 
 
 
 
-
-
-
-		// collision check y
-
-
-
-
-		/* bounce functie
-				if (jump) {
-					c.moveup(+gravity);
-					gravity += 0.1;
-
-					if (gravity > 6) {
-						jump = false;
-					}
-
-				}
-
-		 */
 		for(int i=0;i<numberOfBosses;i++) {
 
 
@@ -291,30 +320,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}
 
-
-		///////////////////////////////
-		//		// collision check y
-		//		double oldgravity = gravity;
-		/*
-		 * for (Rectangle cube : rCube) {
-		 * 
-		 * cube.y = (int) (cube.y - oldgravity); }
-		 */
-		//		// collision check y
-
-
-
 		if (testCollission(rCube, rCharacter, gravity)) {
 			gravity = 0;
 			jumpAllowed = true;
 		}
-		/*
-		 * bounce functie if (jump) { c.moveup(+gravity); gravity += 0.1;
-		 * 
-		 * if (gravity > 6) { jump = false; }
-		 * 
-		 * }
-		 */
+
 		else {
 			c.moveup(-gravity);
 			gravity += 0.1;
@@ -323,10 +333,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 
-		/*
-		 * for (Rectangle cube : rCube) { cube.y = (int) (cube.y + oldgravity);
-		 * }
-		 */
+
 		for (int i = 0; i < numberOfBosses; i++) {
 
 			if (testCollission(rCube, rBoss[i])) {
@@ -334,18 +341,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 
 
-
-
 			if (bossforward[i]) {
-				boss[i].move(-1);
-
-
-
+				boss[i].move(10);
 			}
 			else {
-				boss[i].move(-1);
-
-
+				boss[i].move(-10);
 			}
 		}
 
@@ -360,23 +360,46 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		playTime = (currentTime-startTime);
 		playTime = playTime/1000;
-		/*	outer:
-		for(int i=0;i<numberOfBosses;i++) {
 
-			if(gameUpdate(rBoss[i],rBullet)) {
-				//System.out.println(number);
-			//	System.out.println(i);
-				numberOfBosses--;
-				Rectangle[] X= new Rectangle[numberOfBosses];
-				for (int j=0;j<numberOfBosses;j++) {
-					if(j!=i) {
-					X[j]=new Rectangle(rBoss[i].x,rBoss[i].y,100,100);
-					}
-				}
-				rBoss=X;
-				break outer;
+
+		for(int i=0;i<rBullet2.size();i++) {
+			if(testCollission(rCube,rBullet2.get(i))) {
+				rBullet2.remove(i);
+				bullet2.remove(i);
+				bulletforward2.remove(i);
 			}
-		}*/
+		}
+		for(int i=0;i<numberOfBosses;i++) {
+			for(int a=0;a<rBullet2.size();a++) {
+				if(gameUpdate(rBoss[i],rBullet2.get(a))) {
+					//System.out.println(number);
+					//	System.out.println(i);
+					numberOfBosses--;
+					Rectangle[] X= new Rectangle[numberOfBosses];
+					Character[] Y = new Character[numberOfBosses];
+					for (int j=0;j<numberOfBosses;j++) {
+						if(j<i) {
+							X[j]=new Rectangle(rBoss[j].x,rBoss[j].y,100,100);
+							Y[j]=new Character(boss[j].posX,boss[j].posY);
+						}
+						else {
+							X[j]=new Rectangle(rBoss[j+1].x,rBoss[j+1].y,100,100);
+							Y[j]=new Character(boss[j+1].posX,boss[j+1].posY);
+
+						}
+					}
+					rBoss=X;
+					boss=Y;
+					bullet2.remove(a);
+					rBullet2.remove(a);
+					bulletforward2.remove(a);
+					//	System.out.println(boss.length);
+					//	System.out.println(rBoss.length);
+					break; //outer;
+				}
+			}
+		}
+
 
 
 
@@ -398,7 +421,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 	public void animate() {
-		anim.update(10);
+		anim2.update(20);
+		anim.update(20);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -407,9 +431,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		Graphics2D g2 = (Graphics2D) g;
 
 		super.paintComponent(g);
-		int size = rectsize;
 
-
+		int size;
+		if (!powerup) {
+			size = rectsize;
+		} else {
+			size=3*rectsize;
+		}
 
 		// parralax background
 		if (!debug) {
@@ -428,33 +456,68 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		// face character right way
 		if (!moveRight && !moveLeft && forward && !jump && jumpAllowed) {
-			g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
+			if(!powerup)
+				g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
+			else
+				g.drawImage(currentSprite2 = standaard2, c.posX, getHeight() - size - c.posY, size, size, this);
+
 		}
 
 
-		else if (jump &&forward) {
-			g.drawImage(currentSprite = j1, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+		else if ( jump &&forward) {
+			if(!powerup)
+				g.drawImage(currentSprite = j1, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+			else
+				g.drawImage(currentSprite2 = J1, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+
 		}
 
 
 		else if (jump && !forward) {
-			g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+			if(!powerup)
+				g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+			else
+				g.drawImage(currentSprite2 = J1, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+
 		}
 
+
+
 		else if (!jumpAllowed && !jump && forward) {
-			g.drawImage(currentSprite = j2, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+			if(!powerup)
+				g.drawImage(currentSprite = j2, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+			else
+				g.drawImage(currentSprite2 = J2, c.posX, getHeight() - size - c.posY, size+25, size+25, this);
+
 		}
 
 		else if (!jumpAllowed && !jump && !forward) {
-			g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+			if(!powerup)
+				g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+			else
+				g.drawImage(currentSprite2 = J2, c.posX + size, getHeight() - size - c.posY, -(size+25), size+25, this);
+
 		}
 
+
 		else if (!moveRight && !moveLeft && !forward) {
-			g.drawImage(currentSprite = standaard, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			if(!powerup)
+				g.drawImage(currentSprite = standaard, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			else
+				g.drawImage(currentSprite2 = standaard2, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+
 		} else if (forward) {
-			g.drawImage(currentSprite = anim.getImage(), c.posX, getHeight() - size - c.posY, size, size, this);
+			if(!powerup)
+				g.drawImage(currentSprite = anim.getImage(), c.posX, getHeight() - size - c.posY, size, size, this);
+			else
+				g.drawImage(currentSprite2 = anim2.getImage(), c.posX, getHeight() - size - c.posY, size, size, this);
+
 		} else {
-			g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			if(!powerup)
+				g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size, this);
+			else
+				g.drawImage(currentSprite2 = anim2.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size, this);
+
 
 		}
 
@@ -462,15 +525,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		// character collision 
 		//rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20, size);
 		rCharacter.setBounds(c.posX, getHeight() - size - c.posY, size, size);
+		size=rectsize;
 		for(int i=0;i<numberOfBosses;i++) {
-			//	System.out.println(i);
-			//ERROR ERROR
-			//ERROR ERROR
-			//ERROR ERROR
-			//ERROR ERROR
-			//ERROR ERROR
-			//ERROR ERROR
-
 			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100, 100);
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
@@ -483,23 +539,33 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 
-		rBullet.setBounds(bullet.posX,getHeight()-100-bullet.posY,30,30);
-		if(rBullet.width!=0 ) {
-			//	System.out.println("TEST TEST");
-			g.setColor(Color.BLACK);
 
-			g.fillRect(rBullet.x,rBullet.y,rBullet.width,rBullet.height);
-			//	System.out.println(rBullet);
+		for(int i=0;i<rBullet2.size();i++) {
+			if(rBullet2.get(i).width!=0 ) {
+				//	System.out.println("TEST TEST");
+				g.setColor(Color.BLACK);
+				rBullet2.get(i).setBounds(bullet2.get(i).posX,getHeight()-bulletHeight-bullet2.get(i).posY,bulletWidth,bulletHeight);
+				if(bulletforward2.get(i)){
+					//	g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
+					g.drawImage(bulletbill, rBullet2.get(i).x,rBullet2.get(i).y,bulletWidth,bulletHeight,null);
+				}
+				else {
+					g.drawImage(bulletbill, rBullet2.get(i).x-bulletWidth,rBullet2.get(i).y,-bulletWidth,bulletHeight,null);
+
+				}
+				//	System.out.println(rBullet);
+			}
+		}
+		if(!powerup) {
+			rpowerup.setBounds(cpowerup.posX,getHeight()-100-cpowerup.posY,rpowerup.width,rpowerup.height);
+
+			//	g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width, rpowerup.height);
+			g.drawImage(powerupimg,rpowerup.x, rpowerup.y, rpowerup.width, rpowerup.height, null);
 		}
 
 		int counter=0;
 
-
 		// character collision
-
-
-
-
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j = 0; j < gameworld[i].getSet().length; j++) {
 				for (int k = 0; k < gameworld[i].getSet()[j].length; k++) {
@@ -550,9 +616,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			counter += gameworld[i].getSet()[0].length;
 		}
 
-		if (c.posY < 0 || testCollission(rBoss, rCharacter)) {
+
+		if (c.posY < -100 || testCollission(rBoss, rCharacter) && !powerup) {
 			gameover=true;
 		}
+
 
 		for (int i = rCube.size() - 2; i < rCube.size(); i++) {
 
@@ -564,35 +632,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 
-
-
-
-		//		if(gamefinished) {
-		//			
-		//			spawncharizards();
-		//			gameover=true;
-		//
-		//
-		//			g.setColor(Color.WHITE);
-		//			g.fillRect(0, 0, getWidth(), getHeight());
-		//			g.setColor(Color.BLACK);
-		//			Font myFont = new Font("Courier New", 1, 130);
-		//
-		//			gameworld = (new GameWorld()).getGameWorld();
-		//			g.setFont(myFont);
-		//			g.drawString("Game finished", 600, 500);
-		//			g.drawString("press space to restart", 100, 800);
-		//			
-		//		} else {
-		//			gamefinished = false;
-		//		}
+		// time hud
 		g.setColor(new Color(17, 191, 75));
 		Font timeFont = new Font("Courier New", 1, 50);
 		g.setFont(timeFont);
 		String timeText = "Time: " + df.format(playTime);
 		g.drawString(timeText, (getWidth()/2)-150, 50);
 
-
+		// debug
 		Font debugFont = new Font("Courier New", 1, 15);
 		g.setFont(debugFont);
 		g.setColor(Color.BLACK);
@@ -608,18 +655,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// grid
 			g.setColor(Color.orange);
 			for (int r = 0; r < 1000; r++) {
-				g.drawLine(-100, getHeight() - (100 * r), getWidth(), getHeight() - (100 * r)); // horizontale
-				// lijn
-				g.drawLine((x + (100 * r) - 1000), 0, (x + (100 * r) - 1000), getHeight()); // verticale
-				// lijn
+				g.drawLine(-100, getHeight() - (100 * r), getWidth(), getHeight() - (100 * r)); // horizontale lijn
+				g.drawLine((x + (100 * r) - 1000), 0, (x + (100 * r) - 1000), getHeight()); // verticale lijn
 			}
 
 			// character middle
 			g.setColor(new Color(16, 168, 26));
-			g.drawLine(0, getHeight() - c.posY - (rectsize / 2), getWidth(), getHeight() - c.posY - (rectsize / 2)); // horizontale
-			// lijn
-			g.drawLine(c.posX + (rectsize / 2), 0, c.posX + (rectsize / 2), getHeight()); // verticale
-			// lijn
+			g.drawLine(0, getHeight() - c.posY - (rectsize / 2), getWidth(), getHeight() - c.posY - (rectsize / 2)); // horizontale lijn
+			g.drawLine(c.posX + (rectsize / 2), 0, c.posX + (rectsize / 2), getHeight()); // verticale lijn
 
 			// character x and y
 			g.setColor(Color.BLUE);
@@ -823,6 +866,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void spawncharizards() {
+
+		numberOfBosses=X;
+		boss=new Character[numberOfBosses];
+		rBoss=new Rectangle[numberOfBosses];
 		for(int i=0;i<numberOfBosses;i++) {
 			//	boss[i]=new Character((int) Math.random()*50000,(int) Math.random()*2000);
 			boss[i]=new Character((int) (Math.random()*10000+1000),(int) (Math.random()*1600));
@@ -836,10 +883,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 	/*public void deleteTile(int index) {
-=======
 
 	public void deleteTile(int index) {
->>>>>>> branch 'master' of https://github.com/EBoshart/TheGame.git
 		int sum = 0;
 		for (int i = 0; i < gameworld.length; i++) {
 
@@ -898,6 +943,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		gameover=false;
 		playTime =0;
 		startTime = System.currentTimeMillis();
+		spawnpowerup();
 	}
 
 	public void addMovements(int key, long frame){
@@ -916,7 +962,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		int keyCode = e.getKeyCode();
 		addMovements(keyCode, frameCounter);
 
-
 		switch (keyCode) {
 		case KeyEvent.VK_RIGHT:
 		case KeyEvent.VK_D:
@@ -925,6 +970,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_A:
 			moveLeft = true;
+			break;
+		case KeyEvent.VK_UP : 
+		case KeyEvent.VK_W :
+			shooting=true;
+			shoot2(rCharacter);
 			break;
 		case KeyEvent.VK_SPACE:
 			jump = true;
@@ -940,19 +990,29 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			break;
 		case KeyEvent.VK_P :
 			togglePause();
-			}
+		}
 	}
-	public void shoot(Rectangle rekt) {
+
+	public void shoot2(Rectangle rekt) {
 		//	bullet=new Rectangle(rekt);
 		//	rBullet.x=rBullet.x+100+10;
-		rBullet.x=500;
-		rBullet.y=rBullet.y+30;
-		rBullet.width=30;
-		rBullet.height=30;
-		bullet.posX=c.posX;
-		bullet.posY=c.posY;
+		rBullet2.add(new Rectangle(500,30,bulletWidth,bulletHeight));
+		bullet2.add(new Character(c.posX+bulletWidth+10,c.posY));
+		bulletforward2.add(forward);
+
 		repaint();
 
+	}
+	public void spawnpowerup() {
+		rpowerup.x=(int) (Math.random()*gameworld.length*3*rectsize);
+		rpowerup.y=(int) (Math.random()*0.5*getHeight());
+		rpowerup.y=500;
+		rpowerup.width=100;
+		rpowerup.height=100;
+
+
+		cpowerup.posX=rpowerup.x;
+		cpowerup.posY=rpowerup.y;
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -968,8 +1028,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			break;
 		case KeyEvent.VK_SPACE:
 			jump = false;
+			break;
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_W: 
+			shooting=false;
 		}
-
 		addMovements(keyCode, frameCounter);
 	}
 
