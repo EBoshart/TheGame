@@ -42,13 +42,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character[] boss;
 	Character c;
 	Character bullet;
+	
 	Character cpowerup;
-
+	int powerUpDuration = 750;
+	
+	double growfactor=1.8;
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
 	Rectangle rpowerup;
-	int bulletWidth=268/85*30;
-	int bulletHeight=188/85*30;
+	int bulletWidth=268/85*20;
+	int bulletHeight=188/85*20;
 	int rectsize = 100;
 	long frameCounter = 0;
 	long startTime = System.currentTimeMillis();
@@ -67,8 +70,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage grass = readimage("Sprites/BG_grass.png");
 	BufferedImage sky = readimage("Sprites/BG_sky.png");
 	BufferedImage charizard = readimage("Sprites/charizard2.png");
-	BufferedImage bulletbill =readimage("Sprites/bulletbill.jpg");
-	BufferedImage powerupimg=readimage("Sprites/powerup.jpg");
+	BufferedImage bulletbill =readimage("Sprites/bulletbill.png");
+	BufferedImage powerupimg=readimage("Sprites/powerup.png");
 	boolean debug = false;
 	boolean showFPS = false;
 
@@ -94,7 +97,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean powerup=false;
 
 
-	Timer time = new Timer(10, this);
+	Timer time = new Timer(15, this);
 	boolean paused = false;
 
 	int X=5;
@@ -228,7 +231,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 		for(int i=0;i<rBullet2.size();i++) {
-			System.out.println(rBullet2.size());
+		
 			if(bulletforward2.get(i)) 
 				bullet2.get(i).move(10);
 			else
@@ -267,18 +270,24 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				if(!powerup) 
 					c.moveup(-gravity + 15);
 				else
-					c.moveup(-gravity+45);
+					c.moveup(-gravity+15*growfactor*0.75);
 				gravity += 0.1;
 			}
 		}
-
-		if(gameUpdate(rCharacter,rpowerup)) {
+	
+		if(!powerup &&gameUpdate(rCharacter,rpowerup)) {
 			powerup=true;
 			poweruptimer=0;
+			rpowerup=null;
+			
 		}
 		poweruptimer++;
-		if(poweruptimer>250) {
+		if(poweruptimer>powerUpDuration) {
 			powerup=false;
+
+			if(rpowerup==null) {
+				spawnpowerup();
+			}
 		}
 		timebullet+=50;
 
@@ -299,10 +308,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			else{
 				boss[i].moveup(-bossgravity[i]);
-				bossgravity[i] += 0.1;
+				bossgravity[i] += 0.2;
 			}
 		}
 
+		
 		if (testCollission(rCube, rCharacter, gravity)) {
 			gravity = 0;
 			jumpAllowed = true;
@@ -382,6 +392,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				}
 			}
 		}
+		for(int i=0;i<rBullet2.size();i++) {
+			if(rBullet2.get(i).x > getWidth() || rBullet2.get(i).x <0) {
+				bullet2.remove(i);
+				rBullet2.remove(i);
+				bulletforward2.remove(i);
+				
+			}
+		}
 
 
 
@@ -419,7 +437,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if (!powerup) {
 			size = rectsize;
 		} else {
-			size=3*rectsize;
+			size=(int) (growfactor*rectsize);
 		}
 
 		// parralax background
@@ -529,23 +547,42 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			if(rBullet2.get(i).width!=0 ) {
 				//	System.out.println("TEST TEST");
 				g.setColor(Color.BLACK);
-				rBullet2.get(i).setBounds(bullet2.get(i).posX,getHeight()-bulletHeight-bullet2.get(i).posY,bulletWidth,bulletHeight);
-				if(bulletforward2.get(i)){
-					//	g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
-					g.drawImage(bulletbill, rBullet2.get(i).x,rBullet2.get(i).y,bulletWidth,bulletHeight,null);
+				int bulletwidth,bulletheight;
+				if(powerup) {
+					bulletwidth=(int) (growfactor*bulletWidth);
+					bulletheight=(int) (growfactor*bulletHeight);
 				}
 				else {
-					g.drawImage(bulletbill, rBullet2.get(i).x-bulletWidth,rBullet2.get(i).y,-bulletWidth,bulletHeight,null);
+					bulletwidth=bulletWidth;
+
+					bulletheight=bulletHeight;
+				}
+
+				if(bulletforward2.get(i)){
+					//	g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
+					rBullet2.get(i).setBounds(bullet2.get(i).posX,getHeight()-bulletheight-bullet2.get(i).posY,bulletwidth,bulletheight);
+					g.drawImage(bulletbill, rBullet2.get(i).x,rBullet2.get(i).y,bulletwidth,bulletheight,null);
 
 				}
+				else {
+					rBullet2.get(i).setBounds(bullet2.get(i).posX-bulletwidth,getHeight()-bulletheight-bullet2.get(i).posY,bulletwidth,bulletheight);
+					g.drawImage(bulletbill, rBullet2.get(i).x,rBullet2.get(i).y,-bulletwidth,bulletheight,null);
+
+
+				}
+				
 				//	System.out.println(rBullet);
 			}
+
 		}
 		if(!powerup) {
 			rpowerup.setBounds(cpowerup.posX,getHeight()-100-cpowerup.posY,rpowerup.width,rpowerup.height);
 
 			//	g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width, rpowerup.height);
 			g.drawImage(powerupimg,rpowerup.x, rpowerup.y, rpowerup.width, rpowerup.height, null);
+		} else {
+			//rpowerup.setBounds(0,0,rpowerup.width,rpowerup.height);
+		//	cpowerup=new Character(0,0);
 		}
 
 		int counter=0;
@@ -613,6 +650,28 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if (c.posY < -100 || testCollission(rBoss, rCharacter) && !powerup) {
 			gameover=true;
 		}
+		for(int i=0;i<numberOfBosses;i++) {
+		if (gameUpdate(rBoss[i],rCharacter)&& powerup) {
+			numberOfBosses--;
+			Rectangle[] X= new Rectangle[numberOfBosses];
+			Character[] Y = new Character[numberOfBosses];
+			for (int j=0;j<numberOfBosses;j++) {
+				if(j<i) {
+					X[j]=new Rectangle(rBoss[j].x,rBoss[j].y,100,100);
+					Y[j]=new Character(boss[j].posX,boss[j].posY);
+				}
+				else {
+					X[j]=new Rectangle(rBoss[j+1].x,rBoss[j+1].y,100,100);
+					Y[j]=new Character(boss[j+1].posX,boss[j+1].posY);
+
+				}
+			}
+			rBoss=X;
+			boss=Y;
+			break;
+
+		}
+		}
 
 
 		for (int i = rCube.size() - 2; i < rCube.size(); i++) {
@@ -629,15 +688,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if(powerup){
 			
 			g.setColor(Color.green);
-			g.fillRect((getWidth()/2)-120, 60, 250, 50);
+			g.fillRect((getWidth()/2)-200, 70, 400, 50);
 			
 			Font superFont = new Font("Courier New", 1, 50);
 			g.setColor(Color.BLUE);
 			g.setFont(superFont);
-			g.drawString("SUPER", (getWidth()/2)-70, 100);
+			g.drawString("SUPER", (getWidth()/2)-70, 110);
 			
 			g.setColor(Color.red);
-			g.fillRect((getWidth()/2)+130-poweruptimer, 60, 0+poweruptimer, 50);
+			g.fillRect((getWidth()/2)+200-400*poweruptimer/powerUpDuration, 70, 400*poweruptimer/powerUpDuration, 50);
 		}
 
 		// time hud
@@ -1007,16 +1066,23 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void shoot2(Rectangle rekt) {
-		//	bullet=new Rectangle(rekt);
-		//	rBullet.x=rBullet.x+100+10;
-		rBullet2.add(new Rectangle(500,30,bulletWidth,bulletHeight));
-		bullet2.add(new Character(c.posX+bulletWidth+10,c.posY));
+	
+		if (!powerup) {
+			rBullet2.add(new Rectangle(500,30,bulletWidth,bulletHeight));
+			bullet2.add(new Character(c.posX+bulletWidth+10, c.posY+ bulletHeight/3));
+		}
+		
+		else {
+			rBullet2.add(new Rectangle(500,30,(int) (bulletWidth*growfactor),(int) (growfactor*bulletHeight)));
+			bullet2.add(new Character((int) (c.posX+(bulletWidth+10)*growfactor), (int) (c.posY+growfactor*bulletHeight/3)));
+		}
 		bulletforward2.add(forward);
 
 		repaint();
 
 	}
 	public void spawnpowerup() {
+		rpowerup=new Rectangle(0,0,0,0);
 		rpowerup.x=(int) (Math.random()*gameworld.length*3*rectsize);
 		rpowerup.y=(int) (Math.random()*0.5*getHeight());
 		rpowerup.y=500;
