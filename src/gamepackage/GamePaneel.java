@@ -73,7 +73,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean showFPS = false;
 
 	DecimalFormat df = new DecimalFormat("#.##");
-	int numberOfBosses = 1;
+	int numberOfBosses;
 	// movements
 	boolean moveRight = false;
 	boolean moveLeft = false;
@@ -97,7 +97,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Timer time = new Timer(10, this);
 	boolean paused = false;
 
-	int X=1;
+	int X=5;
 	int poweruptimer;
 
 
@@ -303,23 +303,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 
-
-
-
-		for(int i=0;i<numberOfBosses;i++) {
-
-
-			if(testCollission(rCube,rBoss[i],bossgravity[i])) { 
-				bossgravity[i] =  0; 
-			}
-
-
-			else{ boss[i].moveup(-bossgravity[i]); bossgravity[i] += 0.1;
-
-			}
-
-		}
-
 		if (testCollission(rCube, rCharacter, gravity)) {
 			gravity = 0;
 			jumpAllowed = true;
@@ -443,14 +426,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if (!debug) {
 			int skyScrolling = x / 3;
 			int grassScrolling = x / 2;
+			int numberOfBackgrounds = 4*gameworld.length*rectsize/getWidth();
 
-			for (int i = -1; i < 2; i++) {
-				g2.drawImage(sky, (skyScrolling) + (getWidth() * i), 0, getWidth(), (getHeight() / 3) * 2, this); // sky
+			// sky
+			for (int i = -1; i < numberOfBackgrounds; i++) {
+				g2.drawImage(sky, (skyScrolling) + (getWidth() * i), 0, getWidth(), (getHeight() / 3) * 2, this); 
 			}
 
-			for (int i = -1; i < 3; i++) {
-				g2.drawImage(grass, (grassScrolling) + (getWidth() * i), (getHeight() / 3) * 2, getWidth(),
-						(getHeight() / 3), this); // grass
+			// grass
+			for (int i = -1; i < numberOfBackgrounds; i++) {
+				g2.drawImage(grass, (grassScrolling) + (getWidth() * i), (getHeight() / 3) * 2, getWidth(),(getHeight() / 3), this); 
 			}
 		}
 
@@ -565,7 +550,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		int counter=0;
 
-		// character collision
+		// tilesets
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j = 0; j < gameworld[i].getSet().length; j++) {
 				for (int k = 0; k < gameworld[i].getSet()[j].length; k++) {
@@ -590,6 +575,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 							break;
 						case 4:
 							g.setColor(Color.MAGENTA);
+							img = image1;
+							break;
+						case 5:
+							g.setColor(Color.CYAN);
+							img = image1;
+							break;
+						case 6:
+							g.setColor(Color.ORANGE);
 							img = image1;
 							break;
 						case 10:
@@ -630,6 +623,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				gamefinished = true;
 
 			}
+		}
+		
+		// powerup hud
+		if(powerup){
+			
+			g.setColor(Color.green);
+			g.fillRect((getWidth()/2)-120, 60, 250, 50);
+			
+			Font superFont = new Font("Courier New", 1, 50);
+			g.setColor(Color.BLUE);
+			g.setFont(superFont);
+			g.drawString("SUPER", (getWidth()/2)-70, 100);
+			
+			g.setColor(Color.red);
+			g.fillRect((getWidth()/2)+130-poweruptimer, 60, 0+poweruptimer, 50);
 		}
 
 		// time hud
@@ -705,6 +713,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("Frames: " + frameCounter, debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Playtime: " + df.format(playTime), debugPos, debugTextPos); debugTextPos += 15;
 			g.drawString("Pause: " + paused, debugPos, debugTextPos); debugTextPos += 15;
+			g.drawString("Powerup Time: " + poweruptimer, debugPos, debugTextPos); debugTextPos += 15;
 
 			// movement input 
 			int movXPos = getWidth()-120;
@@ -714,6 +723,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				g.drawString(movementFrames.get(i) + " : " + keyEventToString(movementKeys.get(i)), movXPos, movYPos+(movementFrames.size()*15));
 				movYPos-=15;
 			}
+			
+			
 		}
 
 		if(paused){
@@ -731,9 +742,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	public void showGameOverDialog(){
 		togglePause();
-		jump = false;
-		moveRight = false;
-		moveLeft = false;
 		JOptionPane.showMessageDialog(this,  "You died after " + df.format(playTime) + " seconds of playing! \nPress OK to try again.", "Whoops!", JOptionPane.PLAIN_MESSAGE);
 		respawn();
 		togglePause();
@@ -741,10 +749,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	public void showHighscoreDialog(){
 		togglePause();
-		jump = false;
-		moveRight = false;
-		moveLeft = false;
-		String s = (String)JOptionPane.showInputDialog(this, "You beat the level in " + df.format(playTime) + " seconds! \nPlease enter your name:", "Conglatulation", JOptionPane.PLAIN_MESSAGE);
+		String s = (String)JOptionPane.showInputDialog(this, "You beat the level in " + df.format(playTime) + " seconds! \nPlease enter your name:", "Congratulation", JOptionPane.PLAIN_MESSAGE);
 		System.out.println(s);
 		System.out.println(playTime);
 		respawn();
@@ -775,6 +780,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			return "left";
 		case 32 :
 			return "jump";
+		case 90 :
+		case 17 :
+			return "shoot";
 		default :
 			return ""+key;
 		}
@@ -933,10 +941,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 	public void respawn(){
-		c.posX=100;c.posY=500;
+		jump = false;
+		moveRight = false;
+		moveLeft = false;
+		shooting = false;
+		powerup = false;
 		forward=true;
+		c.posX=100;c.posY=250;
 		gameworld=(new GameWorld()).getGameWorld();
-		gravity=0;
+		gravity=2;
 		x=0;
 		spawncharizards();
 		gamefinished=false;
@@ -950,7 +963,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if(
 				(key==KeyEvent.VK_SPACE && jump == false) || 
 				(((key==KeyEvent.VK_RIGHT) || (key==KeyEvent.VK_D)) && moveRight == false) ||
-				(((key==KeyEvent.VK_LEFT) || (key==KeyEvent.VK_A)) && moveLeft == false)){
+				(((key==KeyEvent.VK_LEFT) || (key==KeyEvent.VK_A)) && moveLeft == false) ||
+				(((key==KeyEvent.VK_CONTROL) || (key==KeyEvent.VK_Z)) && shooting == false)){
 			movementKeys.add(key);
 			movementFrames.add(frame);
 		}
@@ -971,10 +985,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_A:
 			moveLeft = true;
 			break;
-		case KeyEvent.VK_UP : 
-		case KeyEvent.VK_W :
+		case KeyEvent.VK_CONTROL : 
+		case KeyEvent.VK_Z : 
 			shooting=true;
-			shoot2(rCharacter);
 			break;
 		case KeyEvent.VK_SPACE:
 			jump = true;
@@ -1029,8 +1042,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_SPACE:
 			jump = false;
 			break;
-		case KeyEvent.VK_UP:
-		case KeyEvent.VK_W: 
+		case KeyEvent.VK_CONTROL:
+		case KeyEvent.VK_Z:
 			shooting=false;
 		}
 		addMovements(keyCode, frameCounter);
