@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -23,14 +24,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.plaf.synth.SynthSpinnerUI;
+import org.springframework.web.client.RestTemplate;
+
+
 
 import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	int index;
 	int x;
-	Tileset[] gameworld;
-
+	int urltest=1;
+	int urltest2=2;
+	URL url;
+		Tileset[] gameworld;
 	boolean gameover = false;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
@@ -172,6 +178,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	public void move(int direction) {
 		animate();
+		if(powerup) {
+			direction*=growfactor;
+		}
 		if (direction > 0) { // right
 			if (!(testCollission(rCube, rCharacter) && forward)) {
 				forward = true;
@@ -221,6 +230,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(gamefinished){
 			showHighscoreDialog();
+			
 		}
 
 		if(gameover){
@@ -807,10 +817,25 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void showHighscoreDialog(){
+		
 		togglePause();
 		String s = (String)JOptionPane.showInputDialog(this, "You beat the level in " + df.format(playTime) + " seconds! \nPlease enter your name:", "Congratulation", JOptionPane.PLAIN_MESSAGE);
-		System.out.println(s);
-		System.out.println(playTime);
+//		System.out.println(s);
+//		System.out.println(playTime);
+		try {
+	//	url=new URL("http://localhost/Test/servlettest/?param1="+s+"&param2="+playTime);
+		//url=new URL("http://localhost/Test/servlettest/?param1="+urltest+"&param2="+urltest2);
+		RestTemplate rest = new RestTemplate();
+		//String j = rest.getForObject("http://localhost/Test/servlettest?param1="+urltest+"&param2="+urltest2,String.class);
+
+		String j = rest.getForObject("http://localhost/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
+
+		} 
+		catch(Exception exception) {
+			
+		}
+		
+	
 		respawn();
 		togglePause();
 	}
@@ -1061,7 +1086,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			respawn();
 			break;
 		case KeyEvent.VK_P :
-			togglePause();
+			gamefinished=true;
 		}
 	}
 
