@@ -71,7 +71,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage sky = readimage("Sprites/BG_sky.png");
 	BufferedImage charizard = readimage("Sprites/charizard2.png");
 	BufferedImage bulletbill =readimage("Sprites/bulletbill.png");
-	BufferedImage powerupimg=readimage("Sprites/powerup.png");
+	BufferedImage powerupimg=readimage("Sprites/powerup_potion_green.png");
 	boolean debug = false;
 	boolean showFPS = false;
 
@@ -100,7 +100,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Timer time = new Timer(15, this);
 	boolean paused = false;
 
-	int X=5;
+	int X=50;
 	int poweruptimer;
 
 
@@ -687,15 +687,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		// powerup hud
 		if(powerup){
 			
-			g.setColor(Color.green);
+			g.setColor(new Color(7, 237, 65));
 			g.fillRect((getWidth()/2)-200, 70, 400, 50);
 			
 			Font superFont = new Font("Courier New", 1, 50);
-			g.setColor(Color.BLUE);
+			g.setColor(new Color(4, 22, 219));
 			g.setFont(superFont);
 			g.drawString("SUPER", (getWidth()/2)-70, 110);
 			
-			g.setColor(Color.red);
+			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth()/2)+200-400*poweruptimer/powerUpDuration, 70, 400*poweruptimer/powerUpDuration, 50);
 		}
 
