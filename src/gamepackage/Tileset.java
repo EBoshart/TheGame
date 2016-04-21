@@ -9,6 +9,7 @@ public class Tileset {
 		this.set=set;
 
 	}
+	
 	Tile[][] getSet() {
 		//Tile[][] x =new Tile[3][3];
 
