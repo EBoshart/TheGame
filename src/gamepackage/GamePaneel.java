@@ -34,10 +34,7 @@ import animate.Walker;
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	int index;
 	int x;
-	int urltest=1;
-	int urltest2=2;
-	URL url;
-		Tileset[] gameworld;
+	Tileset[] gameworld;
 	boolean gameover = false;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
@@ -115,6 +112,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		this.x = x;
 		this.c = c;
 		this.gameworld = world;
+		
 
 		addKeyListener(this);
 		setFocusable(true);
@@ -604,7 +602,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j = 0; j < gameworld[i].getSet().length; j++) {
 				for (int k = 0; k < gameworld[i].getSet()[j].length; k++) {
+					
 					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
+			/*for (int j = 0; j < gameworld[i].tileset.length; j++) {
+			
+				for (int k = 0; k < gameworld[i].tileset[j].length; k++) {
+					if(gameworld[i].tileset[j][k].type.equals("solid"))	{*/
 						Rectangle cube = new Rectangle();
 						BufferedImage img = null;
 						switch (gameworld[i].set) {
@@ -696,7 +699,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 			}
 		}
-		
+	/*	if(testCollission(rCube,rCharacter,10.0)) {
+			System.out.println(index);
+			deleteTile(index);
+		}*/
 		// powerup hud
 		if(powerup){
 			
@@ -872,7 +878,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < rectanglearraylist.size(); i++) {
 			if (gameUpdate(rectanglearraylist.get(i), pikachu)) {
 
-				index=i;
+				
 				//	deleteTile(index);
 				return true;
 
@@ -887,7 +893,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < rekt.length; i++) {
 			if (gameUpdate(rekt[i], pikachu)) {
 
-				index = i;
+				
 				// deleteTile(index);
 				return true;
 
@@ -945,7 +951,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			if(gameUpdate(x.get(i),pikachu)) 
 			{
 				// deleteTile(index);
-
+				index=i;
 				return true;
 
 			}
@@ -970,7 +976,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 
-	/*public void deleteTile(int index) {
+	
 
 	public void deleteTile(int index) {
 		int sum = 0;
@@ -979,24 +985,29 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// System.out.println(sum);
 			if (sum + gameworld[i].numberoftiles > index) {
 				// System.out.println(index+ " "+ sum);
-				for (int j = 0; j < gameworld[i].numberoftiles; j++) {
-					if (index == sum + j) {
+				/*for (int j = 0; j < gameworld[i].numberoftiles; j++) {
+					if (index == sum + j) {*/
 						// System.out.println("sum="+(index+i+j));
 						// gameworld[i].tileset[j][k]=new Tile("empty");
-						gameworld[i].tileset = new Tile[][] { { new Tile("empty") } };
+					//	System.out.println("well met");
+					
+					
+				
+						
 						// gameworld[i].tileset
 						// System.out.println("test");
 						// gameworld[i]=null;
 						// System.out.println(gameworld[i].tileset[j][k]);
-						return;
+				/*		return;
 					}
 				}
-			} else {
-				sum = sum + gameworld[i].numberoftiles;
+			} else {*/return;
+				
 			}
+			sum = sum + gameworld[i].numberoftiles;
 		}
 
-	}*/
+	}
 
 	public boolean gameUpdate(Rectangle kubus, Rectangle pikachu) {
 		if (kubus.intersects(pikachu)) {

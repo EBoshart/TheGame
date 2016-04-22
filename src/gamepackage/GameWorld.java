@@ -2,7 +2,7 @@ package gamepackage;
 
 public class GameWorld {
 	static int worldSize=20;
-	Tileset bla=new Tileset(1);
+//	Tileset bla=new Tileset(1);
 	
 	
 		// TODO Auto-generated method stub
