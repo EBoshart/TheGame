@@ -49,7 +49,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character bullet;
 
 	Character cpowerup;
-	int powerUpDuration = 500;
+	int powerUpDuration = 300;
 
 	double growfactor = 1.8;
 	Rectangle[] rBoss;
@@ -525,7 +525,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		rCharacter.setBounds(c.posX, getHeight() - size - c.posY, size, size);
 		size = rectsize;
 		for (int i = 0; i < numberOfBosses; i++) {
-			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100, 100);
+			rBoss[i].setBounds(boss[i].posX+5, getHeight() - 100 - boss[i].posY, 100-5, 100);
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -994,7 +994,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < numberOfBosses; i++) {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
-			boss[i] = new Character((int) (Math.random() * 10000 + 1000), (int) (Math.random() * 1600));
+			
+			boss[i] = new Character((int) (Math.random() * 3*gameworld.length*rectsize+ 1000), (int) (Math.random() * 750+250));
 			rBoss[i] = new Rectangle();
 
 			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100, 100);
