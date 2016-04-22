@@ -2,7 +2,7 @@ package gamepackage;
 
 import javax.swing.JFrame;
 import Sound.SoundClass;
-public class Test{
+public class Start{
 	
 	static int width=1900;
 	static int height=1000;
@@ -24,7 +24,7 @@ public class Test{
 		//frame.getContentPane().add(c.createCharacter());
 		frame.add(new GamePaneel(0,getworld,c));
 		
-//		sound.PlaySound();
+		sound.PlaySound();
 		
 		frame.setVisible(true);
 		

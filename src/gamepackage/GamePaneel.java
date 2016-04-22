@@ -30,6 +30,8 @@ import org.springframework.web.client.RestTemplate;
 import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
+	Double version = 1.0;
+	
 	int index;
 	int x;
 	Tileset[] gameworld;
@@ -707,6 +709,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		String timeText = "Time: " + df.format(playTime);
 		g.drawString(timeText, (getWidth() / 2) - 150, 50);
 
+		g.setColor(Color.white);
+		Font versionFont = new Font("Courier New", 1, 20);
+		g.setFont(versionFont);
+		g.drawString("V:" + version, getWidth()-70, getHeight()-10);
+		
 		// debug
 		Font debugFont = new Font("Courier New", 1, 15);
 		g.setFont(debugFont);
@@ -718,6 +725,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("fps: " + fpsOutput, debugPos, debugTextPos);
 			debugTextPos += 15;
 		}
+		
+		
 
 		if (debug) {
 			// grid
@@ -843,19 +852,32 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			togglePause();
 		}
 	}
+	
+	public void showCheatDialog(){
+		togglePause();
+		JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
+		try{
+			JOptionPane.showMessageDialog(this,  "Here's something that's more up your alley.", "Cheater!", JOptionPane.WARNING_MESSAGE);
+			Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
+		}
+		catch(Exception ex){
+			System.exit(0);
+		}
+		System.exit(0);
+	}
 
 	public void postHighScores(String s) {
 
 		System.out.println("posting highscores");
 		try {
 			RestTemplate rest = new RestTemplate();
-			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1=" + s + "&param2=" + playTime,
-					String.class);
 
-		} catch (Exception exception) {
-			JOptionPane.showMessageDialog(this,
-					"No connection could be made to the highscore database.\nPlease try again later.", "Sorry!",
-					JOptionPane.WARNING_MESSAGE);
+			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&param3="+version,String.class);
+
+		} 
+		catch(Exception exception) {
+			JOptionPane.showMessageDialog(this,  "No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.", "Sorry!", JOptionPane.WARNING_MESSAGE);
+
 		}
 	}
 
@@ -1059,20 +1081,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	}
 
-	public void showCheatDialog() {
-		togglePause();
-		JOptionPane.showMessageDialog(this, "Nice try. \nNo cheating allowed!", "Cheater!",
-				JOptionPane.WARNING_MESSAGE);
-		try {
-			JOptionPane.showMessageDialog(this, "Here's something that's more up your alley.", "Cheater!",
-					JOptionPane.WARNING_MESSAGE);
-			Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
-		} catch (Exception ex) {
-			System.exit(0);
-		}
-		System.exit(0);
-	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
@@ -1106,8 +1114,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_P:
 			togglePause();
 			break;
-		case KeyEvent.VK_T:
-			// showHighscoreDialog();
+
+		case KeyEvent.VK_T :
+			//showHighscoreDialog();
+
 			showCheatDialog();
 		}
 	}
@@ -1131,12 +1141,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void spawnpowerup() {
-		rpowerup = new Rectangle(0, 0, 0, 0);
-		rpowerup.x = (int) (Math.random() * gameworld.length * 3 * rectsize);
-		rpowerup.y = (int) (Math.random() * 0.5 * getHeight());
-		rpowerup.y = 500;
-		rpowerup.width = 100;
-		rpowerup.height = 100;
+
+		rpowerup=new Rectangle(0,0,0,0);
+		rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
+		rpowerup.y=(int) (Math.random()*0.5*getHeight());
+		rpowerup.y=500;
+		rpowerup.width=100;
+		rpowerup.height=100;
+
 
 		cpowerup.posX = rpowerup.x;
 		cpowerup.posY = rpowerup.y;
