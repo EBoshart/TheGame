@@ -1136,8 +1136,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			togglePause();
 			break;
 		case KeyEvent.VK_T :
-			showHighscoreDialog();
-//			showCheatDialog();
+			//showHighscoreDialog();
+			showCheatDialog();
 		}
 	}
 
