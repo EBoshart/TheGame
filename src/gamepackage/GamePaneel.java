@@ -46,10 +46,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character[] boss;
 	Character c;
 	Character bullet;
-	
+
 	Character cpowerup;
 	int powerUpDuration = 500;
-	
+
 	double growfactor=1.8;
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
@@ -81,6 +81,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	DecimalFormat df = new DecimalFormat("#.##");
 	int numberOfBosses;
+	
 	// movements
 	boolean moveRight = false;
 	boolean moveLeft = false;
@@ -112,7 +113,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		this.x = x;
 		this.c = c;
 		this.gameworld = world;
-		
+
 
 		addKeyListener(this);
 		setFocusable(true);
@@ -229,7 +230,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(gamefinished){
 			showHighscoreDialog();
-			
+
 		}
 
 		if(gameover){
@@ -240,7 +241,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 		for(int i=0;i<rBullet2.size();i++) {
-		
+
 			if(bulletforward2.get(i)) 
 				bullet2.get(i).move(10);
 			else
@@ -283,12 +284,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				gravity += 0.1;
 			}
 		}
-	
+
 		if(!powerup &&gameUpdate(rCharacter,rpowerup)) {
 			powerup=true;
 			poweruptimer=0;
 			rpowerup=null;
-			
+
 		}
 		poweruptimer++;
 		if(poweruptimer>powerUpDuration) {
@@ -321,7 +322,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 
-		
+
 		if (testCollission(rCube, rCharacter, gravity)) {
 			gravity = 0;
 			jumpAllowed = true;
@@ -406,7 +407,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				bullet2.remove(i);
 				rBullet2.remove(i);
 				bulletforward2.remove(i);
-				
+
 			}
 		}
 
@@ -581,7 +582,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 
 				}
-				
+
 				//	System.out.println(rBullet);
 			}
 
@@ -593,7 +594,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawImage(powerupimg,rpowerup.x, rpowerup.y, rpowerup.width, rpowerup.height, null);
 		} else {
 			//rpowerup.setBounds(0,0,rpowerup.width,rpowerup.height);
-		//	cpowerup=new Character(0,0);
+			//	cpowerup=new Character(0,0);
 		}
 
 		int counter=0;
@@ -602,10 +603,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < gameworld.length; i++) {
 			for (int j = 0; j < gameworld[i].getSet().length; j++) {
 				for (int k = 0; k < gameworld[i].getSet()[j].length; k++) {
-					
+
 					if (gameworld[i].getSet()[j][k].type.equals("solid")) {
-			/*for (int j = 0; j < gameworld[i].tileset.length; j++) {
-			
+						/*for (int j = 0; j < gameworld[i].tileset.length; j++) {
+
 				for (int k = 0; k < gameworld[i].tileset[j].length; k++) {
 					if(gameworld[i].tileset[j][k].type.equals("solid"))	{*/
 						Rectangle cube = new Rectangle();
@@ -667,26 +668,26 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			gameover=true;
 		}
 		for(int i=0;i<numberOfBosses;i++) {
-		if (gameUpdate(rBoss[i],rCharacter)&& powerup) {
-			numberOfBosses--;
-			Rectangle[] X= new Rectangle[numberOfBosses];
-			Character[] Y = new Character[numberOfBosses];
-			for (int j=0;j<numberOfBosses;j++) {
-				if(j<i) {
-					X[j]=new Rectangle(rBoss[j].x,rBoss[j].y,100,100);
-					Y[j]=new Character(boss[j].posX,boss[j].posY);
-				}
-				else {
-					X[j]=new Rectangle(rBoss[j+1].x,rBoss[j+1].y,100,100);
-					Y[j]=new Character(boss[j+1].posX,boss[j+1].posY);
+			if (gameUpdate(rBoss[i],rCharacter)&& powerup) {
+				numberOfBosses--;
+				Rectangle[] X= new Rectangle[numberOfBosses];
+				Character[] Y = new Character[numberOfBosses];
+				for (int j=0;j<numberOfBosses;j++) {
+					if(j<i) {
+						X[j]=new Rectangle(rBoss[j].x,rBoss[j].y,100,100);
+						Y[j]=new Character(boss[j].posX,boss[j].posY);
+					}
+					else {
+						X[j]=new Rectangle(rBoss[j+1].x,rBoss[j+1].y,100,100);
+						Y[j]=new Character(boss[j+1].posX,boss[j+1].posY);
 
+					}
 				}
+				rBoss=X;
+				boss=Y;
+				break;
+
 			}
-			rBoss=X;
-			boss=Y;
-			break;
-
-		}
 		}
 
 
@@ -699,21 +700,21 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 			}
 		}
-	/*	if(testCollission(rCube,rCharacter,10.0)) {
+		/*	if(testCollission(rCube,rCharacter,10.0)) {
 			System.out.println(index);
 			deleteTile(index);
 		}*/
 		// powerup hud
 		if(powerup){
-			
+
 			g.setColor(new Color(7, 237, 65));
 			g.fillRect((getWidth()/2)-200, 70, 400, 50);
-			
+
 			Font superFont = new Font("Courier New", 1, 50);
 			g.setColor(new Color(4, 22, 219));
 			g.setFont(superFont);
 			g.drawString("SUPER", (getWidth()/2)-70, 110);
-			
+
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth()/2)+200-400*poweruptimer/powerUpDuration, 70, 400*poweruptimer/powerUpDuration, 50);
 		}
@@ -801,8 +802,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				g.drawString(movementFrames.get(i) + " : " + keyEventToString(movementKeys.get(i)), movXPos, movYPos+(movementFrames.size()*15));
 				movYPos-=15;
 			}
-			
-			
+
+
 		}
 
 		if(paused){
@@ -826,20 +827,37 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public void showHighscoreDialog(){
-		
-		togglePause();
+		if(!paused){
+			togglePause();
+		}
 		String s = (String)JOptionPane.showInputDialog(this, "You beat the level in " + df.format(playTime) + " seconds! \nPlease enter your name:", "Congratulation", JOptionPane.PLAIN_MESSAGE);
-		
+
+		if((s!=null) && (s.trim().length() > 0)){
+			postHighScores(s);
+		}
+		else if(s==null){
+		}
+		else{
+			JOptionPane.showMessageDialog(this,  "Please enter your name so we can laugh at your score.", "Well now...", JOptionPane.WARNING_MESSAGE);
+			showHighscoreDialog();
+		}
+		respawn();
+		if(paused){
+			togglePause();
+		}
+	}
+
+	public void postHighScores(String s){
+
+		System.out.println("posting highscores");
 		try {
-		RestTemplate rest = new RestTemplate();
-		String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
-		
+			RestTemplate rest = new RestTemplate();
+			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
+
 		} 
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this,  "No connection could be made to the highscore database.\nPlease try again later.", "Sorry!", JOptionPane.WARNING_MESSAGE);
 		}
-		respawn();
-		togglePause();
 	}
 
 	public void togglePause(){
@@ -878,7 +896,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < rectanglearraylist.size(); i++) {
 			if (gameUpdate(rectanglearraylist.get(i), pikachu)) {
 
-				
+
 				//	deleteTile(index);
 				return true;
 
@@ -893,7 +911,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < rekt.length; i++) {
 			if (gameUpdate(rekt[i], pikachu)) {
 
-				
+
 				// deleteTile(index);
 				return true;
 
@@ -976,7 +994,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 
 
-	
+
 
 	public void deleteTile(int index) {
 		int sum = 0;
@@ -987,22 +1005,22 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				// System.out.println(index+ " "+ sum);
 				/*for (int j = 0; j < gameworld[i].numberoftiles; j++) {
 					if (index == sum + j) {*/
-						// System.out.println("sum="+(index+i+j));
-						// gameworld[i].tileset[j][k]=new Tile("empty");
-					//	System.out.println("well met");
-					
-					
-				
-						
-						// gameworld[i].tileset
-						// System.out.println("test");
-						// gameworld[i]=null;
-						// System.out.println(gameworld[i].tileset[j][k]);
+				// System.out.println("sum="+(index+i+j));
+				// gameworld[i].tileset[j][k]=new Tile("empty");
+				//	System.out.println("well met");
+
+
+
+
+				// gameworld[i].tileset
+				// System.out.println("test");
+				// gameworld[i]=null;
+				// System.out.println(gameworld[i].tileset[j][k]);
 				/*		return;
 					}
 				}
 			} else {*/return;
-				
+
 			}
 			sum = sum + gameworld[i].numberoftiles;
 		}
@@ -1062,6 +1080,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	}
 
+	public void showCheatDialog(){
+		togglePause();
+		JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
+		try{
+			JOptionPane.showMessageDialog(this,  "Here's something that's more up your alley.", "Cheater!", JOptionPane.WARNING_MESSAGE);
+			Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
+		}
+		catch(Exception ex){
+			System.exit(0);
+		}
+		System.exit(0);
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
@@ -1097,26 +1128,17 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			break;
 		case KeyEvent.VK_T :
 //			showHighscoreDialog();
-			togglePause();
-			JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
-			try{
-				JOptionPane.showMessageDialog(this,  "Here's something that's more up your alley.", "Cheater!", JOptionPane.WARNING_MESSAGE);
-				Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
-			}
-			catch(Exception ex){
-				System.exit(0);
-			}
-			System.exit(0);
+			showCheatDialog();
 		}
 	}
 
 	public void shoot2(Rectangle rekt) {
-	
+
 		if (!powerup) {
 			rBullet2.add(new Rectangle(500,30,bulletWidth,bulletHeight));
 			bullet2.add(new Character(c.posX+bulletWidth+10, c.posY+ bulletHeight/3));
 		}
-		
+
 		else {
 			rBullet2.add(new Rectangle(500,30,(int) (bulletWidth*growfactor),(int) (growfactor*bulletHeight)));
 			bullet2.add(new Character((int) (c.posX+(bulletWidth+10)*growfactor), (int) (c.posY+growfactor*bulletHeight/3)));
