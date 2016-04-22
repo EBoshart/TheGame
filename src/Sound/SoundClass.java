@@ -22,11 +22,7 @@ public class SoundClass {
 
 	public static void PlaySound(){
 	
-
-		
-
-		//String bip = "file:/C:/Users/Student/git/TheGame/bin/Sound/Nyan.mp3";
-		String bip = "Nyan.mp3";
+		String bip = "http://10.2.22.56/PoKeMan/resources/theme.mp3";
 		System.out.println(bip);
 		Media hit = new Media(bip);
 		mediaPlayer = new MediaPlayer(hit);
