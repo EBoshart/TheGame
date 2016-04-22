@@ -873,7 +873,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		System.out.println("posting highscores");
 		try {
-			double version =1.0;
 			RestTemplate rest = new RestTemplate();
 			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&param3="+version,String.class);
 
