@@ -2,7 +2,7 @@ package gamepackage;
 
 import javax.swing.JFrame;
 import Sound.SoundClass;
-public class Test{
+public class Start{
 	
 	static int width=1900;
 	static int height=1000;

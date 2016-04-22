@@ -283,7 +283,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					c.moveup(-gravity + 15);
 				else
 					c.moveup(-gravity+15*growfactor*0.75);
-				gravity += 0.1;
+				//gravity += 0.1;
 			}
 		}
 
@@ -873,8 +873,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		System.out.println("posting highscores");
 		try {
+			double version =1.0;
 			RestTemplate rest = new RestTemplate();
-			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
+			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&param3="+version,String.class);
 
 		} 
 		catch(Exception exception) {
