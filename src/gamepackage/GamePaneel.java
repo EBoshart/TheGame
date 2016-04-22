@@ -31,7 +31,7 @@ import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Double version = 1.0;
-	
+
 	int index;
 	int x;
 	Tileset[] gameworld;
@@ -39,7 +39,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
 	public Image currentSprite, currentSprite2, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2, standaard2, W0, W1,
-			W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn;
+	W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn;
 	Walker anim;
 	Walker anim2;
 	private int default_time = 1500;
@@ -47,7 +47,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character[] boss;
 	Character c;
 	Character bullet;
-
+	Character[] cmetroid;
 	Character cpowerup;
 	int powerUpDuration = 300;
 
@@ -55,6 +55,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
 	Rectangle rpowerup;
+	Rectangle[] rMetroid;
 	int bulletWidth = 268 / 85 * 20;
 	int bulletHeight = 188 / 85 * 20;
 	int rectsize = 100;
@@ -68,7 +69,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gamefinished = false;
 	// BufferedImage image = readimage("Sprites/pikachu.png");
 	BufferedImage image0 = readimage("Sprites/tile1HD.png");
-
+	BufferedImage metroid=readimage("Sprites/metroid.png");
 	BufferedImage image1 = readimage("Sprites/tile2HD.png");
 	BufferedImage finishImg = readimage("Sprites/finish.png");
 	BufferedImage hero = readimage("Sprites/hero.png");
@@ -82,6 +83,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	DecimalFormat df = new DecimalFormat("#.##");
 	int numberOfBosses;
+	int numberOfMetroids;
 
 	// movements
 	boolean moveRight = false;
@@ -100,12 +102,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	ArrayList<Boolean> bulletforward2 = new ArrayList<>();
 	boolean[] bossforward;
 	double[] bossgravity;
+	double[] metroidgravity;
+	boolean[] metroidupward;
 	boolean powerup = false;
 
 	Timer time = new Timer(15, this);
 	boolean paused = false;
 
 	int X = 50;
+	int X2=50;
+
 	int poweruptimer;
 
 	GamePaneel(int x, Tileset[] world, Character c) {
@@ -119,8 +125,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		time.start();
 		rCharacter = new Rectangle();
 		numberOfBosses = X;
+		numberOfMetroids=X2;
+
+
 		rpowerup = new Rectangle(0, 0, 0, 0);
 		cpowerup = new Character(0, 0);
+
 		// rBoss=new Rectangle[numberOfBosses];
 		// boss= new Character[numberOfBosses];
 
@@ -129,9 +139,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		boss = new Character[numberOfBosses];
 		bossforward = new boolean[numberOfBosses];
 		bossgravity = new double[numberOfBosses];
+		metroidupward=new boolean[numberOfMetroids];
+		metroidgravity=new double[numberOfMetroids];
 		spawncharizards();
 		spawnpowerup();
-
+		spawnmetroids();
 		standaard = readimage("Sprites/default.png");
 		w1 = readimage("Sprites/0.png");
 		w2 = readimage("Sprites/1.png");
@@ -198,6 +210,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 						boss[i].move(-direction);
 
 					}
+					for (int i = 0; i < numberOfMetroids; i++) {
+
+						cmetroid[i].move(-direction);
+
+					}
 				}
 			}
 		}
@@ -216,6 +233,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					for (int i = 0; i < numberOfBosses; i++) {
 
 						boss[i].move(-direction);
+					}
+					for (int i = 0; i < numberOfMetroids; i++) {
+
+						cmetroid[i].move(-direction);
+
 					}
 				}
 			}
@@ -288,6 +310,37 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			timebullet = 0;
 			shoot2(rCharacter);
 		}
+		for (int i = 0; i < numberOfMetroids; i++) {
+
+			if (testCollission(rCube, rMetroid[i], metroidgravity[i])) {
+				metroidupward[i]=true;
+				cmetroid[i].moveup(metroidgravity[i]);
+				metroidgravity[i]=0;
+
+
+			} 
+			else if(rMetroid[i].y <0) {
+				metroidupward[i]=false;
+				cmetroid[i].moveup(-metroidgravity[i]);
+				metroidgravity[i]=0;
+
+			}
+
+
+			else if(metroidupward[i]) {
+				cmetroid[i].moveup(metroidgravity[i]);
+				metroidgravity[i] =5;
+				
+			}else {
+				cmetroid[i].moveup(-metroidgravity[i]);
+				metroidgravity[i]+=0.3;
+			}
+			
+
+
+			
+		}
+
 
 		for (int i = 0; i < numberOfBosses / 2; i++) {
 
@@ -412,6 +465,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		super.paintComponent(g);
 
 		int size;
+		int metroidsize;
 		if (!powerup) {
 			size = rectsize;
 		} else {
@@ -472,10 +526,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = J1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 
 		}
 
@@ -490,10 +544,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (!jumpAllowed && !jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = J2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 
 		}
 
@@ -512,10 +566,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			if (!powerup)
 				g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = anim2.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-						this);
+				this);
 
 		}
 
@@ -526,6 +580,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		size = rectsize;
 		for (int i = 0; i < numberOfBosses; i++) {
 			rBoss[i].setBounds(boss[i].posX+5, getHeight() - 100 - boss[i].posY, 100-5, 100);
+			//FIX DIT
+			//
+			//
+			//
+			
+			if(boss[i].posX+5<0 || rBoss[i].x<0) {
+			rBoss[i].setBounds(1000, getHeight() - 100 - boss[i].posY, 100-5, 100);
+
+			}
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -534,6 +597,22 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				g.drawRect(boss[i].posX, getHeight() - size - boss[i].posY, size, size);
 			}
 			g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
+
+			//	g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
+
+		}	//metroidsize = rectsize;
+		for (int i = 0; i < numberOfMetroids; i++) {
+			rMetroid[i].setBounds(cmetroid[i].posX+5, getHeight() - 100 - cmetroid[i].posY, 100-5, 100);
+		}
+		for (int i = 0; i < numberOfMetroids; i++) {
+			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
+			// size);
+			if (debug) {
+				g.drawRect(cmetroid[i].posX, getHeight() - size - cmetroid[i].posY, size, size);
+			}
+			g.drawImage(metroid, cmetroid[i].posX, getHeight() - size - cmetroid[i].posY, size, size, null);
+
+			//	g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
 
 		}
 
@@ -649,7 +728,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			counter += gameworld[i].getSet()[0].length;
 		}
 
-		if (c.posY < -100 || testCollission(rBoss, rCharacter) && !powerup) {
+		if (c.posY < -100 || (testCollission(rBoss, rCharacter) ||testCollission(rMetroid, rCharacter) )&& !powerup) {
 			gameover = true;
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
@@ -713,7 +792,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		Font versionFont = new Font("Courier New", 1, 20);
 		g.setFont(versionFont);
 		g.drawString("V:" + version, getWidth()-70, getHeight()-10);
-		
+
 		// debug
 		Font debugFont = new Font("Courier New", 1, 15);
 		g.setFont(debugFont);
@@ -725,25 +804,25 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("fps: " + fpsOutput, debugPos, debugTextPos);
 			debugTextPos += 15;
 		}
-		
-		
+
+
 
 		if (debug) {
 			// grid
 			g.setColor(Color.orange);
 			for (int r = 0; r < 1000; r++) {
 				g.drawLine(-100, getHeight() - (100 * r), getWidth(), getHeight() - (100 * r)); // horizontale
-																								// lijn
+				// lijn
 				g.drawLine((x + (100 * r) - 1000), 0, (x + (100 * r) - 1000), getHeight()); // verticale
-																							// lijn
+				// lijn
 			}
 
 			// character middle
 			g.setColor(new Color(16, 168, 26));
 			g.drawLine(0, getHeight() - c.posY - (rectsize / 2), getWidth(), getHeight() - c.posY - (rectsize / 2)); // horizontale
-																														// lijn
+			// lijn
 			g.drawLine(c.posX + (rectsize / 2), 0, c.posX + (rectsize / 2), getHeight()); // verticale
-																							// lijn
+			// lijn
 
 			// character x and y
 			g.setColor(Color.BLUE);
@@ -852,7 +931,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			togglePause();
 		}
 	}
-	
+
 	public void showCheatDialog(){
 		togglePause();
 		JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
@@ -994,11 +1073,31 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < numberOfBosses; i++) {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
-			
+
 			boss[i] = new Character((int) (Math.random() * 3*gameworld.length*rectsize+ 1000), (int) (Math.random() * 750+250));
 			rBoss[i] = new Rectangle();
 
 			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100, 100);
+
+		}
+
+	}
+	public void spawnmetroids() {
+
+		numberOfMetroids= X2;
+		cmetroid = new Character[numberOfMetroids];
+		rMetroid = new Rectangle[numberOfMetroids];
+		for (int i = 0; i < numberOfMetroids; i++) {
+			// boss[i]=new Character((int) Math.random()*50000,(int)
+			// Math.random()*2000);
+
+			//		cmetroid[i] = new Character((int) (Math.random() * 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize), (int) (Math.random() * 750+250));
+			//	System.out.println(((int) (Math.random() * 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize)));
+			cmetroid[i] = new Character((int) (Math.random() * 3*gameworld.length*rectsize+ 1000), (int) (Math.random() * 500+250));
+
+			rMetroid[i] = new Rectangle();
+
+			rMetroid[i].setBounds(cmetroid[i].posX, getHeight() - 100 - cmetroid[i].posY, 100, 100);
 
 		}
 
@@ -1064,6 +1163,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		gravity = 2;
 		x = 0;
 		spawncharizards();
+		spawnmetroids();
 		gamefinished = false;
 		gameover = false;
 		playTime = 0;
