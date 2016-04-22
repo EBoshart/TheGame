@@ -281,7 +281,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					c.moveup(-gravity + 15);
 				else
 					c.moveup(-gravity+15*growfactor*0.75);
-				//gravity += 0.1;
+				gravity += 0.1;
 			}
 		}
 
@@ -1151,7 +1151,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 	public void spawnpowerup() {
 		rpowerup=new Rectangle(0,0,0,0);
-		rpowerup.x=(int) (Math.random()*gameworld.length*3*rectsize);
+		rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
 		rpowerup.y=(int) (Math.random()*0.5*getHeight());
 		rpowerup.y=500;
 		rpowerup.width=100;
