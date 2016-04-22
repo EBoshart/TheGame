@@ -1,6 +1,7 @@
 package gamepackage;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -50,7 +51,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character bullet;
 	
 	Character cpowerup;
-	int powerUpDuration = 750;
+	int powerUpDuration = 500;
 	
 	double growfactor=1.8;
 	Rectangle[] rBoss;
@@ -545,7 +546,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < numberOfBosses; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
 			// size);
-			g.drawRect(boss[i].posX, getHeight() - size - boss[i].posY, size, size);
+			if(debug){
+				g.drawRect(boss[i].posX, getHeight() - size - boss[i].posY, size, size);
+			}
 			g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
 
 
@@ -820,22 +823,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		
 		togglePause();
 		String s = (String)JOptionPane.showInputDialog(this, "You beat the level in " + df.format(playTime) + " seconds! \nPlease enter your name:", "Congratulation", JOptionPane.PLAIN_MESSAGE);
-//		System.out.println(s);
-//		System.out.println(playTime);
+		
 		try {
-	//	url=new URL("http://localhost/Test/servlettest/?param1="+s+"&param2="+playTime);
-		//url=new URL("http://localhost/Test/servlettest/?param1="+urltest+"&param2="+urltest2);
 		RestTemplate rest = new RestTemplate();
-		//String j = rest.getForObject("http://localhost/Test/servlettest?param1="+urltest+"&param2="+urltest2,String.class);
-
-		String j = rest.getForObject("http://localhost/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
-
+		String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime,String.class);
+		
 		} 
 		catch(Exception exception) {
-			
+			JOptionPane.showMessageDialog(this,  "No connection could be made to the highscore database.\nPlease try again later.", "Sorry!", JOptionPane.WARNING_MESSAGE);
 		}
-		
-	
 		respawn();
 		togglePause();
 	}
@@ -1086,7 +1082,20 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			respawn();
 			break;
 		case KeyEvent.VK_P :
-			gamefinished=true;
+			togglePause();
+			break;
+		case KeyEvent.VK_T :
+//			showHighscoreDialog();
+			togglePause();
+			JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
+			try{
+				JOptionPane.showMessageDialog(this,  "Here's something that's more up your alley.", "Cheater!", JOptionPane.WARNING_MESSAGE);
+				Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
+			}
+			catch(Exception ex){
+				System.exit(0);
+			}
+			System.exit(0);
 		}
 	}
 
