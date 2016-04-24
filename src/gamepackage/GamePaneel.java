@@ -319,7 +319,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		poweruptimer2++;
 		if (poweruptimer2 > powerUpDuration2) {
 			powerup2 = false;
-
+			
 			if (rpowerup2 == null) {
 				spawnpowerup2();
 			}
@@ -695,7 +695,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 
 		}
-		if (!powerup) {
+		if ( rpowerup !=null) {
 			rpowerup.setBounds(cpowerup.posX, getHeight() - 100 - cpowerup.posY, rpowerup.width, rpowerup.height);
 
 			// g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width,
@@ -704,7 +704,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			// rpowerup.setBounds(0,0,rpowerup.width,rpowerup.height);
 			// cpowerup=new Character(0,0);
-		}if (!powerup2) {
+		}if ( rpowerup2 !=null) {
 			rpowerup2.setBounds(cpowerup2.posX, getHeight() - 100 - cpowerup2.posY, rpowerup2.width, rpowerup2.height);
 
 			// g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width,
@@ -1316,7 +1316,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void spawnpowerup() {
 
 		rpowerup=new Rectangle(0,0,0,0);
-		rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
+		rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth()+x)+getWidth()-x);
+		System.out.println(rpowerup.x);
+	//	rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
 		rpowerup.y=(int) (Math.random()*0.5*getHeight());
 		rpowerup.y=500;
 		rpowerup.width=100;
@@ -1329,7 +1331,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void spawnpowerup2() {
 
 		rpowerup2=new Rectangle(0,0,0,0);
-		rpowerup2.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
+		rpowerup2.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth()+x)+getWidth()-x);
+		System.out.println(rpowerup2.x);
+	//	rpowerup2.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
 		rpowerup2.y=(int) (Math.random()*0.5*getHeight());
 		rpowerup2.y=500;
 		rpowerup2.width=100;
