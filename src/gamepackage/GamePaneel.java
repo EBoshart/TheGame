@@ -38,10 +38,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean gameover = false;
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
-	public Image currentSprite, currentSprite2, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2, standaard2, W0, W1,
-	W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn;
+	public Image currentSprite, currentSprite2, currentSprite3, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2, standaard2, W0, W1,
+	W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn, sw1, sw2, sw3, sw4, sw5, sw6, ds;
 	Walker anim;
 	Walker anim2;
+	Walker anim3;
 	private int default_time = 1500;
 	private int timebullet = 0;
 	Character[] boss;
@@ -172,7 +173,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		J2 = readimage("Sprites/j2n.png");
 		shoot = readimage("Sprites/shoot.png");
 		shootn = readimage("Sprites/shootn.png");
-
+		sw1 = readimage("Sprites/sw1.png");
+		sw2 = readimage("Sprites/sw2.png");
+		sw3 = readimage("Sprites/sw3.png");
+		sw4 = readimage("Sprites/sw4.png");
+		sw5 = readimage("Sprites/sw5.png");
+		sw6 = readimage("Sprites/sw6.png");
+		ds = readimage("Sprites/ds.png");
+		
 		anim = new Walker();
 		anim.addFrame(w1, 50);
 		anim.addFrame(w2, 50);
@@ -192,6 +200,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		anim2.addFrame(W7, 50);
 		currentSprite2 = anim2.getImage();
 		currentSprite = anim.getImage();
+		
+		anim3 = new Walker();
+		anim3.addFrame(sw1, 50);
+		anim3.addFrame(sw2, 50);
+		anim3.addFrame(sw3, 50);
+		anim3.addFrame(sw4, 50);
+		anim3.addFrame(sw5, 50);
+		anim3.addFrame(sw6, 50);
+		currentSprite3 = anim3.getImage();
 	}
 
 	public void move(int direction) {
@@ -502,6 +519,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void animate() {
 		anim2.update(20);
 		anim.update(20);
+		anim3.update(20);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -553,13 +571,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		else if (shooting && forward) {
 			if (!powerup) {
-				g.drawImage(currentSprite = shoot, c.posX, getHeight() - size - c.posY, size, size, this);
+				g.drawImage(currentSprite = anim3.getImage(), c.posX, getHeight() - size - c.posY, size+10, size+10, this);
 			} else {
 				g.drawImage(currentSprite = shootn, c.posX, getHeight() - size - c.posY, size, size, this);
 			}
 		} else if (shooting && !forward) {
 			if (!powerup) {
-				g.drawImage(currentSprite = shoot, c.posX + size, getHeight() - size - c.posY, -size, size, this);
+				g.drawImage(currentSprite = anim3.getImage(), c.posX + size, getHeight() - size - c.posY, -size-10, size+10, this);
 			} else {
 				g.drawImage(currentSprite = shootn, c.posX + size, getHeight() - size - c.posY, -size, size, this);
 			}
