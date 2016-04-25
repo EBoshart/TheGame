@@ -30,7 +30,8 @@ import org.springframework.web.client.RestTemplate;
 import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
-	Double version = 1.0;
+	Double version = 1.11;
+	String geheim = "asdfghjkl;";
 
 	int index;
 	int x;
@@ -109,13 +110,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	double[] bossgravity;
 	double[] metroidgravity;
 	boolean[] metroidupward;
-	boolean powerup = false;
+	boolean powerup = true;
 	boolean powerup2=false;
 	Timer time = new Timer(15, this);
 	boolean paused = false;
 
-	int X = 50;
-	int X2=20;
+	int X = 20;
+	int X2= 20;
 
 	int poweruptimer;
 	int poweruptimer2;
@@ -884,7 +885,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		g.setColor(new Color(17, 191, 75));
 		Font timeFont = new Font("Courier New", 1, 50);
 		g.setFont(timeFont);
-		String timeText = "Time: " + df.format(playTime);
+		String timeText = "Charisard: " + df.format(playTime);
 		g.drawString(timeText, (getWidth() / 2) - 150, 50);
 
 		g.setColor(Color.white);
@@ -1050,7 +1051,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		try {
 			RestTemplate rest = new RestTemplate();
 
-			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&param3="+version,String.class);
+			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&"+ geheim +"="+version,String.class);
 
 		} 
 		catch(Exception exception) {
