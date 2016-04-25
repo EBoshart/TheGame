@@ -15,22 +15,21 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.ListIterator;
+
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.swing.plaf.synth.SynthSpinnerUI;
+
 import org.springframework.web.client.RestTemplate;
 
 import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
-	Double version = 1.0;
+	Double version = 1.11;
 
 	int index;
 	int x;
@@ -39,7 +38,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	ArrayList<Rectangle> rCube = new ArrayList<>();
 
 	public Image currentSprite, currentSprite2, standaard, w0, w1, w2, w3, w4, w5, w6, w7, j1, j2, standaard2, W0, W1,
-	W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn;
+			W2, W3, W4, W5, W6, W7, J1, J2, shoot, shootn;
 	Walker anim;
 	Walker anim2;
 	private int default_time = 1500;
@@ -48,17 +47,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Character c;
 	Character bullet;
 	Character[] cmetroid;
+	Character[] cATAT;
 	Character cpowerup;
 	Character cpowerup2;
 	int powerUpDuration = 300;
-	int powerUpDuration2=600;
+	int powerUpDuration2 = 600;
 	double growfactor = 1.8;
-	double growfactor2=0.66;
+	double growfactor2 = 0.66;
 	Rectangle[] rBoss;
 	Rectangle rCharacter;
 	Rectangle rpowerup;
 	Rectangle rpowerup2;
 	Rectangle[] rMetroid;
+	Rectangle[] rATAT;
 	int bulletWidth = 268 / 85 * 20;
 	int bulletHeight = 188 / 85 * 20;
 	int rectsize = 100;
@@ -67,12 +68,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	double playTime = 0;
 	int fpsCounter = 0;
 	int fpsOutput = 0;
-
+	String secret="ToErSa";
 	double gravity = 0.5;
 	boolean gamefinished = false;
 	// BufferedImage image = readimage("Sprites/pikachu.png");
 	BufferedImage image0 = readimage("Sprites/tile1HD.png");
-	BufferedImage metroid=readimage("Sprites/metroid.png");
+	BufferedImage metroid = readimage("Sprites/metroid.png");
 	BufferedImage image1 = readimage("Sprites/tile2HD.png");
 	BufferedImage finishImg = readimage("Sprites/finish.png");
 	BufferedImage hero = readimage("Sprites/hero.png");
@@ -81,13 +82,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage charizard = readimage("Sprites/charizard2.png");
 	BufferedImage bulletbill = readimage("Sprites/bulletbill.png");
 	BufferedImage powerupimg = readimage("Sprites/powerup_potion_green.png");
-	BufferedImage hourglass= readimage("Sprites/Hourglass.png");
+	BufferedImage hourglass = readimage("Sprites/Hourglass.png");
+	BufferedImage ATAT=readimage("Sprites/ATAT.png");
 	boolean debug = false;
 	boolean showFPS = false;
 
 	DecimalFormat df = new DecimalFormat("#.##");
 	int numberOfBosses;
 	int numberOfMetroids;
+	int numberOfATATs = 50;
 
 	// movements
 	boolean moveRight = false;
@@ -109,28 +112,31 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	double[] metroidgravity;
 	boolean[] metroidupward;
 	boolean powerup = false;
-	boolean powerup2=false;
+	boolean powerup2 = false;
 	Timer time = new Timer(15, this);
 	boolean paused = false;
 
 	int X = 50;
-	int X2=20;
+	int X2 = 20;
 
 	int poweruptimer;
 	int poweruptimer2;
+	double topscore;
+
+	
+
 	GamePaneel(int x, Tileset[] world, Character c) {
 		this.x = x;
 		this.c = c;
 		this.gameworld = world;
-
+		this.topscore=this.getTopscore();
 		addKeyListener(this);
 		setFocusable(true);
 		requestFocus();
 		time.start();
 		rCharacter = new Rectangle();
 		numberOfBosses = X;
-		numberOfMetroids=X2;
-
+		numberOfMetroids = X2;
 
 		rpowerup = new Rectangle(0, 0, 0, 0);
 		cpowerup = new Character(0, 0);
@@ -142,14 +148,17 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		bullet = new Character(0, 0);
 		rBoss = new Rectangle[numberOfBosses];
 		boss = new Character[numberOfBosses];
+		rATAT=new Rectangle[numberOfATATs];
+		cATAT=new Character[numberOfATATs];
 		bossforward = new boolean[numberOfBosses];
 		bossgravity = new double[numberOfBosses];
-		metroidupward=new boolean[numberOfMetroids];
-		metroidgravity=new double[numberOfMetroids];
+		metroidupward = new boolean[numberOfMetroids];
+		metroidgravity = new double[numberOfMetroids];
 		spawncharizards();
 		spawnpowerup();
 		spawnpowerup2();
 		spawnmetroids();
+		spawnATATs();
 		standaard = readimage("Sprites/default.png");
 		w1 = readimage("Sprites/0.png");
 		w2 = readimage("Sprites/1.png");
@@ -193,13 +202,33 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		currentSprite2 = anim2.getImage();
 		currentSprite = anim.getImage();
 	}
+	double getTopscore() {
+		System.out.println("getting highscores");
+		double highscore= 0;
+		
+		try {
+			RestTemplate rest = new RestTemplate();
+
+			String j = rest.getForObject("http://10.2.22.56/PoKeMan/GetHighscore2", String.class);
+			highscore=Double.parseDouble(j);
+			System.out.println(j);
+		} catch (Exception exception) {
+			highscore=1000;
+			JOptionPane.showMessageDialog(this,
+					"No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.",
+					"Sorry!", JOptionPane.WARNING_MESSAGE);
+		
+
+		}
+		return highscore;
+	}
 
 	public void move(int direction) {
 		animate();
 		if (powerup) {
 			direction *= growfactor;
 		}
-		
+
 		if (direction > 0) { // right
 			if (!(testCollission(rCube, rCharacter) && forward)) {
 				forward = true;
@@ -298,12 +327,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 		if (!powerup && gameUpdate(rCharacter, rpowerup)) {
-			if(powerup) {
-			powerup2=false;
-			spawnpowerup2();
-			}
+			/*
+			 * if(powerup) { powerup2=false; spawnpowerup2(); }
+			 */
 			powerup = true;
-			
+
 			poweruptimer = 0;
 			rpowerup = null;
 
@@ -317,10 +345,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 		if (!powerup2 && gameUpdate(rCharacter, rpowerup2)) {
-			if(powerup) {
-			powerup=false;
-			spawnpowerup();
-			}
+			/*
+			 * if(powerup) { powerup=false; spawnpowerup(); }
+			 */
 			powerup2 = true;
 			poweruptimer2 = 0;
 			rpowerup2 = null;
@@ -329,12 +356,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		poweruptimer2++;
 		if (poweruptimer2 > powerUpDuration2) {
 			powerup2 = false;
-			
+
 			if (rpowerup2 == null) {
 				spawnpowerup2();
 			}
 		}
-		
+
 		timebullet += 50;
 
 		if (shooting && timebullet > default_time) {
@@ -344,44 +371,35 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		for (int i = 0; i < numberOfMetroids; i++) {
 
 			if (testCollission(rCube, rMetroid[i], metroidgravity[i])) {
-				metroidupward[i]=true;
+				metroidupward[i] = true;
 				cmetroid[i].moveup(metroidgravity[i]);
-				metroidgravity[i]=0;
+				metroidgravity[i] = 0;
 
-
-			} 
-			else if(rMetroid[i].y <0) {
-				metroidupward[i]=false;
+			} else if (rMetroid[i].y < 0) {
+				metroidupward[i] = false;
 				cmetroid[i].moveup(-metroidgravity[i]);
-				metroidgravity[i]=0;
+				metroidgravity[i] = 0;
 
 			}
 
-
-			else if(metroidupward[i]) {
+			else if (metroidupward[i]) {
 				cmetroid[i].moveup(metroidgravity[i]);
-				if(!powerup2){
-				metroidgravity[i] =5;
+				if (!powerup2) {
+					metroidgravity[i] = 5;
+				} else {
+					metroidgravity[i] = 5 * growfactor2 / 2;
 				}
-				else {
-					metroidgravity[i]=5*growfactor2/2;
-				}
-				
-			}else {
+
+			} else {
 				cmetroid[i].moveup(-metroidgravity[i]);
 				if (!powerup2) {
-					metroidgravity[i]+=0.3;
-				}
-				else {
-					metroidgravity[i]+=0.3*growfactor2/2;
+					metroidgravity[i] += 0.3;
+				} else {
+					metroidgravity[i] += 0.3 * growfactor2 / 2;
 				}
 			}
-			
 
-
-			
 		}
-
 
 		for (int i = 0; i < numberOfBosses / 2; i++) {
 
@@ -414,15 +432,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 
 			if (bossforward[i]) {
-				if(!powerup2)
-				boss[i].move(10);
+				if (!powerup2)
+					boss[i].move(10);
 				else
-					boss[i].move((int) (10*growfactor2/2));
+					boss[i].move((int) (10 * growfactor2 / 2));
 			} else {
-				if(!powerup2)
-				boss[i].move(-10);
+				if (!powerup2)
+					boss[i].move(-10);
 				else
-					boss[i].move((int) (-10*growfactor2/2));
+					boss[i].move((int) (-10 * growfactor2 / 2));
 			}
 		}
 
@@ -514,13 +532,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		int size;
 		int metroidsize;
 		if (powerup) {
-			
+
 			size = (int) (growfactor * rectsize);
-			
-		} else if(powerup2) {
-			size = (int) (growfactor2 *rectsize);		
-			}
-		else {
+
+		} else if (powerup2) {
+			size = (int) (growfactor2 * rectsize);
+		} else {
 			size = rectsize;
 		}
 
@@ -578,10 +595,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-				this);
+						this);
 			else
 				g.drawImage(currentSprite2 = J1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-				this);
+						this);
 
 		}
 
@@ -596,10 +613,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (!jumpAllowed && !jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-				this);
+						this);
 			else
 				g.drawImage(currentSprite2 = J2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-				this);
+						this);
 
 		}
 
@@ -618,10 +635,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			if (!powerup)
 				g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-				this);
+						this);
 			else
 				g.drawImage(currentSprite2 = anim2.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-				this);
+						this);
 
 		}
 
@@ -629,24 +646,31 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		// rCharacter.setBounds(c.posX-10, getHeight() - size - c.posY, size+20,
 		// size);
 		rCharacter.setBounds(c.posX, getHeight() - size - c.posY, size, size);
-//		System.out.println(rCharacter.x);
+		// System.out.println(rCharacter.x);
+
+		g.setColor(Color.BLACK);
+		g.drawLine((int) (x + playTime * gameworld.length * 4.375 * rectsize / topscore), 1000,
+				(int) (x + playTime * gameworld.length * 4.375 * rectsize / topscore), 0);
+
 		size = rectsize;
 		for (int i = 0; i < numberOfBosses; i++) {
-			
-			//FIX DIT
+
+			// FIX DIT
 			//
 			//
 			//
-			
-			if( boss[i].posX<0 /*|| boss[i].posY > getHeight() || boss[i].posY <0*/) {
-			
-			boss[i].posX=10000;
-			//boss[i].posY=500;
-			bossforward[i]=false;
-			
+
+			if (boss[i].posX < 0 /*
+									 * || boss[i].posY > getHeight() ||
+									 * boss[i].posY <0
+									 */) {
+
+				boss[i].posX = 10000;
+				// boss[i].posY=500;
+				bossforward[i] = false;
 
 			}
-			rBoss[i].setBounds(boss[i].posX+20, getHeight() - 100 - boss[i].posY, 100-20, 100-20);
+			rBoss[i].setBounds(boss[i].posX + 20, getHeight() - 100 - boss[i].posY, 100 - 20, 100);
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -656,11 +680,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
 
-			//	g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
+			// g.drawImage(charizard, boss[i].posX, getHeight() - size -
+			// boss[i].posY, size, size, null);
 
-		}	//metroidsize = rectsize;
+		} // metroidsize = rectsize;
 		for (int i = 0; i < numberOfMetroids; i++) {
-			rMetroid[i].setBounds(cmetroid[i].posX+20, getHeight() - 100 - cmetroid[i].posY-20, 100-20, 100-25);
+			rMetroid[i].setBounds(cmetroid[i].posX + 20, getHeight() - 100 - cmetroid[i].posY - 20, 100 - 20, 100 - 25);
 		}
 		for (int i = 0; i < numberOfMetroids; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -670,10 +695,26 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 			g.drawImage(metroid, cmetroid[i].posX, getHeight() - size - cmetroid[i].posY, size, size, null);
 
-			//	g.drawImage(charizard, boss[i].posX, getHeight() - size - boss[i].posY, size, size, null);
+			// g.drawImage(charizard, boss[i].posX, getHeight() - size -
+			// boss[i].posY, size, size, null);
 
 		}
+		/*for (int i = 0; i < numberOfATATs; i++) {
+			rATAT[i].setBounds(cATAT[i].posX + 20, getHeight() - 100 - cATAT[i].posY - 20, 100 - 20, 100 - 25);
+		}
+		for (int i = 0; i < numberOfATATs; i++) {
+			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
+			// size);
+			if (debug) {
+				g.drawRect(cATAT[i].posX, getHeight() - size - cATAT[i].posY, size, size);
+			}
+			g.drawImage(ATAT, cATAT[i].posX, getHeight() - size - cATAT[i].posY, size, size, null);
 
+			// g.drawImage(charizard, boss[i].posX, getHeight() - size -
+			// boss[i].posY, size, size, null);
+
+		}*/
+		
 		for (int i = 0; i < rBullet2.size(); i++) {
 			if (rBullet2.get(i).width != 0) {
 				// System.out.println("TEST TEST");
@@ -705,7 +746,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 
 		}
-		if ( rpowerup !=null) {
+		if (rpowerup != null) {
 			rpowerup.setBounds(cpowerup.posX, getHeight() - 100 - cpowerup.posY, rpowerup.width, rpowerup.height);
 
 			// g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width,
@@ -714,7 +755,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			// rpowerup.setBounds(0,0,rpowerup.width,rpowerup.height);
 			// cpowerup=new Character(0,0);
-		}if ( rpowerup2 !=null) {
+		}
+		if (rpowerup2 != null) {
 			rpowerup2.setBounds(cpowerup2.posX, getHeight() - 100 - cpowerup2.posY, rpowerup2.width, rpowerup2.height);
 
 			// g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width,
@@ -795,7 +837,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			counter += gameworld[i].getSet()[0].length;
 		}
 
-		if (c.posY < -100 || (testCollission(rBoss, rCharacter) ||testCollission(rMetroid, rCharacter) )&& !powerup) {
+		if (c.posY < -100 || (testCollission(rBoss, rCharacter) || testCollission(rMetroid, rCharacter)) && !powerup) {
 			gameover = true;
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
@@ -836,15 +878,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		if (powerup) {
 
 			g.setColor(new Color(7, 237, 65));
-			g.fillRect((getWidth() / 2) - 200, 70, 400, 50);
+			g.fillRect((getWidth() / 2) - 200, 120, 400, 50);
 
 			Font superFont = new Font("Courier New", 1, 50);
 			g.setColor(new Color(4, 22, 219));
 			g.setFont(superFont);
-			g.drawString("SUPER", (getWidth() / 2) - 70, 110);
+			g.drawString("SUPER", (getWidth() / 2) - 70, 160);
 
 			g.setColor(new Color(201, 20, 20));
-			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer / powerUpDuration, 70,
+			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer / powerUpDuration, 120,
 					400 * poweruptimer / powerUpDuration, 50);
 		}
 		if (powerup2) {
@@ -855,7 +897,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			Font superFont = new Font("Courier New", 1, 50);
 			g.setColor(new Color(4, 22, 219));
 			g.setFont(superFont);
-			g.drawString("SLOW TIME", (getWidth() / 2) - 70, 160);
+			g.drawString("SLOW TIME", (getWidth() / 2) - 70, 110);
 
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer2 / powerUpDuration2, 70,
@@ -872,7 +914,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		g.setColor(Color.white);
 		Font versionFont = new Font("Courier New", 1, 20);
 		g.setFont(versionFont);
-		g.drawString("V:" + 1.1, getWidth()-70, getHeight()-10);
+		g.drawString("V:" + version, getWidth() - 70, getHeight() - 10);
 
 		// debug
 		Font debugFont = new Font("Courier New", 1, 15);
@@ -885,8 +927,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.drawString("fps: " + fpsOutput, debugPos, debugTextPos);
 			debugTextPos += 15;
 		}
-
-
 
 		if (debug) {
 			// grid
@@ -1013,14 +1053,15 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 	}
 
-	public void showCheatDialog(){
+	public void showCheatDialog() {
 		togglePause();
-		JOptionPane.showMessageDialog(this,  "Nice try. \nNo cheating allowed!", "Cheater!", JOptionPane.WARNING_MESSAGE);
-		try{
-			JOptionPane.showMessageDialog(this,  "Here's something that's more up your alley.", "Cheater!", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(this, "Nice try. \nNo cheating allowed!", "Cheater!",
+				JOptionPane.WARNING_MESSAGE);
+		try {
+			JOptionPane.showMessageDialog(this, "Here's something that's more up your alley.", "Cheater!",
+					JOptionPane.WARNING_MESSAGE);
 			Desktop.getDesktop().browse(new URL("http://hellokittygamesfree.com/").toURI());
-		}
-		catch(Exception ex){
+		} catch (Exception ex) {
 			System.exit(0);
 		}
 		System.exit(0);
@@ -1032,11 +1073,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		try {
 			RestTemplate rest = new RestTemplate();
 
-			String j = rest.getForObject("http://10.2.22.56/PoKeMan/servlettest?param1="+s+"&param2="+playTime+"&param3="+version,String.class);
+			String j = rest.getForObject(
+					"http://10.2.22.56/PoKeMan/servlettest?param1=" + s + "&param2=" + playTime + "&"+secret+"=" + version,
+					String.class);
 
-		} 
-		catch(Exception exception) {
-			JOptionPane.showMessageDialog(this,  "No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.", "Sorry!", JOptionPane.WARNING_MESSAGE);
+		} catch (Exception exception) {
+			JOptionPane.showMessageDialog(this,
+					"No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.",
+					"Sorry!", JOptionPane.WARNING_MESSAGE);
 
 		}
 	}
@@ -1155,7 +1199,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
 
-			boss[i] = new Character((int) (Math.random() * 3*gameworld.length*rectsize+ 1000), (int) (Math.random() * 750+250));
+			boss[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+					(int) (Math.random() * 750 + 250));
 			rBoss[i] = new Rectangle();
 
 			rBoss[i].setBounds(boss[i].posX, getHeight() - 100 - boss[i].posY, 100, 100);
@@ -1163,18 +1208,23 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 	}
+
 	public void spawnmetroids() {
 
-		numberOfMetroids= X2;
+		numberOfMetroids = X2;
 		cmetroid = new Character[numberOfMetroids];
 		rMetroid = new Rectangle[numberOfMetroids];
 		for (int i = 0; i < numberOfMetroids; i++) {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
 
-			//		cmetroid[i] = new Character((int) (Math.random() * 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize), (int) (Math.random() * 750+250));
-			//	System.out.println(((int) (Math.random() * 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize)));
-			cmetroid[i] = new Character((int) (Math.random() * 3*gameworld.length*rectsize+ 1000), (int) (Math.random() * 500+250));
+			// cmetroid[i] = new Character((int) (Math.random() *
+			// 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize),
+			// (int) (Math.random() * 750+250));
+			// System.out.println(((int) (Math.random() *
+			// 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize)));
+			cmetroid[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+					(int) (Math.random() * 500 + 250));
 
 			rMetroid[i] = new Rectangle();
 
@@ -1182,6 +1232,24 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}
 
+	}
+	public void spawnATATs() {
+		
+		cATAT = new Character[numberOfATATs];
+		rATAT = new Rectangle[numberOfATATs];
+		for (int i = 0; i < numberOfATATs; i++) {
+			// boss[i]=new Character((int) Math.random()*50000,(int)
+			// Math.random()*2000);
+
+			cATAT[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+					(int) (Math.random() * 750 + 250));
+			rATAT[i] = new Rectangle();
+
+			rATAT[i].setBounds(cATAT[i].posX, getHeight() - 100 - cATAT[i].posY, 100, 100);
+
+		}
+
+		
 	}
 
 	public void deleteTile(int index) {
@@ -1237,7 +1305,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		moveLeft = false;
 		shooting = false;
 		powerup = false;
-		powerup2=false;
+		powerup2 = false;
 		forward = true;
 		c.posX = 100;
 		c.posY = 250;
@@ -1299,8 +1367,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			togglePause();
 			break;
 
-		case KeyEvent.VK_T :
-			//showHighscoreDialog();
+		case KeyEvent.VK_T:
+			// showHighscoreDialog();
 
 			showCheatDialog();
 		}
@@ -1326,30 +1394,31 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	public void spawnpowerup() {
 
-		rpowerup=new Rectangle(0,0,0,0);
-		rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth()+x)+getWidth()-x);
+		rpowerup = new Rectangle(0, 0, 0, 0);
+		rpowerup.x = (int) (Math.random() * (gameworld.length * 3 * rectsize - getWidth() + x) + getWidth() - x);
 		System.out.println(rpowerup.x);
-	//	rpowerup.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
-		rpowerup.y=(int) (Math.random()*0.5*getHeight());
-		rpowerup.y=500;
-		rpowerup.width=100;
-		rpowerup.height=100;
-
+		// rpowerup.x=(int)
+		// (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
+		rpowerup.y = (int) (Math.random() * 0.5 * getHeight());
+		rpowerup.y = 400;
+		rpowerup.width = 100;
+		rpowerup.height = 100;
 
 		cpowerup.posX = rpowerup.x;
 		cpowerup.posY = rpowerup.y;
 	}
+
 	public void spawnpowerup2() {
 
-		rpowerup2=new Rectangle(0,0,0,0);
-		rpowerup2.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth()+x)+getWidth()-x);
+		rpowerup2 = new Rectangle(0, 0, 0, 0);
+		rpowerup2.x = (int) (Math.random() * (gameworld.length * 3 * rectsize - getWidth() + x) + getWidth() - x);
 		System.out.println(rpowerup2.x);
-	//	rpowerup2.x=(int) (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
-		rpowerup2.y=(int) (Math.random()*0.5*getHeight());
-		rpowerup2.y=500;
-		rpowerup2.width=100;
-		rpowerup2.height=100;
-
+		// rpowerup2.x=(int)
+		// (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
+		rpowerup2.y = (int) (Math.random() * 0.5 * getHeight());
+		rpowerup2.y = 400;
+		rpowerup2.width = 100;
+		rpowerup2.height = 100;
 
 		cpowerup2.posX = rpowerup2.x;
 		cpowerup2.posY = rpowerup2.y;
