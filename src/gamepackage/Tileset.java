@@ -66,7 +66,7 @@ public class Tileset {
 			//3
 		case 10:   numberoftiles=3;return this.tileset= new Tile[][]{
 			{new Tile("solid"),new Tile("solid"),new Tile("solid")}};
-
+ 
 //			flat tile
 //			xxx
 			//3
