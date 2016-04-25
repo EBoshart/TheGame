@@ -81,6 +81,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage charizard = readimage("Sprites/charizard2.png");
 	BufferedImage bulletbill = readimage("Sprites/bulletbill.png");
 	BufferedImage powerupimg = readimage("Sprites/powerup_potion_green.png");
+	BufferedImage hourglass= readimage("Sprites/Hourglass.png");
 	boolean debug = false;
 	boolean showFPS = false;
 
@@ -297,7 +298,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 		if (!powerup && gameUpdate(rCharacter, rpowerup)) {
+			if(powerup) {
+			powerup2=false;
+			spawnpowerup2();
+			}
 			powerup = true;
+			
 			poweruptimer = 0;
 			rpowerup = null;
 
@@ -311,6 +317,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			}
 		}
 		if (!powerup2 && gameUpdate(rCharacter, rpowerup2)) {
+			if(powerup) {
+			powerup=false;
+			spawnpowerup();
+			}
 			powerup2 = true;
 			poweruptimer2 = 0;
 			rpowerup2 = null;
@@ -636,7 +646,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			
 
 			}
-			rBoss[i].setBounds(boss[i].posX+5, getHeight() - 100 - boss[i].posY, 100-5, 100);
+			rBoss[i].setBounds(boss[i].posX+20, getHeight() - 100 - boss[i].posY, 100-20, 100-20);
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -650,7 +660,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}	//metroidsize = rectsize;
 		for (int i = 0; i < numberOfMetroids; i++) {
-			rMetroid[i].setBounds(cmetroid[i].posX+5, getHeight() - 100 - cmetroid[i].posY, 100-5, 100);
+			rMetroid[i].setBounds(cmetroid[i].posX+20, getHeight() - 100 - cmetroid[i].posY-20, 100-20, 100-25);
 		}
 		for (int i = 0; i < numberOfMetroids; i++) {
 			// g.fillRect(boss[i].posX, getHeight()-size-boss[i].posY, size,
@@ -709,7 +719,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 			// g.fillRect(rpowerup.x, rpowerup.y, rpowerup.width,
 			// rpowerup.height);
-			g.drawImage(powerupimg, rpowerup2.x, rpowerup2.y, rpowerup2.width, rpowerup2.height, null);
+			g.drawImage(hourglass, rpowerup2.x, rpowerup2.y, rpowerup2.width, rpowerup2.height, null);
 		} else {
 			// rpowerup.setBounds(0,0,rpowerup.width,rpowerup.height);
 			// cpowerup=new Character(0,0);
@@ -839,16 +849,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		if (powerup2) {
 
-			g.setColor(new Color(7, 237, 65));
-			g.fillRect((getWidth() / 2) - 200, 120, 400, 50);
+			g.setColor(Color.YELLOW);
+			g.fillRect((getWidth() / 2) - 200, 70, 400, 50);
 
 			Font superFont = new Font("Courier New", 1, 50);
 			g.setColor(new Color(4, 22, 219));
 			g.setFont(superFont);
-			g.drawString("SLOW TIME", (getWidth() / 2) - 100, 160);
+			g.drawString("SLOW TIME", (getWidth() / 2) - 70, 160);
 
 			g.setColor(new Color(201, 20, 20));
-			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer2 / powerUpDuration2, 120,
+			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer2 / powerUpDuration2, 70,
 					400 * poweruptimer2 / powerUpDuration2, 50);
 		}
 
@@ -862,7 +872,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		g.setColor(Color.white);
 		Font versionFont = new Font("Courier New", 1, 20);
 		g.setFont(versionFont);
-		g.drawString("V:" + version, getWidth()-70, getHeight()-10);
+		g.drawString("V:" + 1.1, getWidth()-70, getHeight()-10);
 
 		// debug
 		Font debugFont = new Font("Courier New", 1, 15);
@@ -1227,6 +1237,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		moveLeft = false;
 		shooting = false;
 		powerup = false;
+		powerup2=false;
 		forward = true;
 		c.posX = 100;
 		c.posY = 250;
