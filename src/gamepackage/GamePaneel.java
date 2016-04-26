@@ -125,8 +125,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean paused = false;
 
 
-	int X = 50;
-	int X2 = 20;
+	int X = 25;
+	int X2 = 10;
 
 
 
