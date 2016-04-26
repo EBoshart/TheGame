@@ -30,15 +30,7 @@ public class Character extends JPanel{
 		this.posY = posY;
 	}
 
-	public JLabel createCharacter() throws IOException
-	{
-		String path = "Sprites/pikachu.png";
-	    File file = new File(path);
-	    BufferedImage image = ImageIO.read(file);
-	    JLabel label = new JLabel(new ImageIcon(image));
-		return label;
-	
-	}
+
 	
 	public void move(int direction){
 		posX += direction;
