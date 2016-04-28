@@ -240,9 +240,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			System.out.println(j);
 		} catch (Exception exception) {
 			highscore=1000;
-//			JOptionPane.showMessageDialog(this,
-//					"No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.",
-//					"Sorry!", JOptionPane.WARNING_MESSAGE);
 		
 
 		}
@@ -726,7 +723,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// boss[i].posY, size, size, null);
 
 		}
-		for (int i = 0; i < numberOfATATs; i++) {
+/*		for (int i = 0; i < numberOfATATs; i++) {
 			rATAT[i].setBounds(cATAT[i].posX + 20, getHeight() - 100 - cATAT[i].posY - 20, 100 - 20, 100 - 25);
 		}
 		for (int i = 0; i < numberOfATATs; i++) {
@@ -740,7 +737,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// g.drawImage(charizard, boss[i].posX, getHeight() - size -
 			// boss[i].posY, size, size, null);
 
-		}
+		}*/
 		
 		for (int i = 0; i < rBullet2.size(); i++) {
 			if (rBullet2.get(i).width != 0) {
@@ -907,28 +904,30 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.setColor(new Color(7, 237, 65));
 			g.fillRect((getWidth() / 2) - 200, 120, 400, 50);
 
-			Font superFont = new Font("Courier New", 1, 50);
-			g.setColor(new Color(4, 22, 219));
-			g.setFont(superFont);
-			g.drawString("SUPER", (getWidth() / 2) - 70, 160);
+		
 
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer / powerUpDuration, 120,
 					400 * poweruptimer / powerUpDuration, 50);
+			Font superFont = new Font("Courier New", 1, 50);
+			g.setColor(new Color(4, 22, 219));
+			g.setFont(superFont);
+			g.drawString("SUPER", (getWidth() / 2) - 70, 160);
 		}
 		if (powerup2) {
 
 			g.setColor(Color.YELLOW);
 			g.fillRect((getWidth() / 2) - 200, 70, 400, 50);
 
-			Font superFont = new Font("Courier New", 1, 50);
-			g.setColor(new Color(4, 22, 219));
-			g.setFont(superFont);
-			g.drawString("SLOW TIME", (getWidth() / 2) - 70, 110);
+			
 
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer2 / powerUpDuration2, 70,
 					400 * poweruptimer2 / powerUpDuration2, 50);
+			Font superFont = new Font("Courier New", 1, 50);
+			g.setColor(new Color(4, 22, 219));
+			g.setFont(superFont);
+			g.drawString("SLOW TIME", (getWidth() / 2) - 70, 110);
 		}
 
 		// time hud
