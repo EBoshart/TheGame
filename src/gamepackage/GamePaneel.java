@@ -30,7 +30,7 @@ import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	Double version = 1.11;
-
+	String secret="asdf";
 
 
 	int index;
@@ -73,7 +73,6 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	double playTime = 0;
 	int fpsCounter = 0;
 	int fpsOutput = 0;
-	String secret="ToErSa";
 	double gravity = 0.5;
 	boolean gamefinished = false;
 	// BufferedImage image = readimage("Sprites/pikachu.png");
@@ -125,8 +124,8 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean paused = false;
 
 
-	int X = 25;
-	int X2 = 10;
+	int X = 10;
+	int X2 = 5;
 
 
 
@@ -241,9 +240,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			System.out.println(j);
 		} catch (Exception exception) {
 			highscore=1000;
-			JOptionPane.showMessageDialog(this,
-					"No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.",
-					"Sorry!", JOptionPane.WARNING_MESSAGE);
+//			JOptionPane.showMessageDialog(this,
+//					"No connection could be made to the highscore database.\nMake sure you have the latest version of the game and try again.",
+//					"Sorry!", JOptionPane.WARNING_MESSAGE);
 		
 
 		}
@@ -1397,9 +1396,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			break;
 
 		case KeyEvent.VK_T:
-			// showHighscoreDialog();
+			 showHighscoreDialog();
 
-			showCheatDialog();
+//			showCheatDialog();
 		}
 	}
 
