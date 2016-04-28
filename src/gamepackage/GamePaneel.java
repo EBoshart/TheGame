@@ -29,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import animate.Walker;
 
 public class GamePaneel extends JPanel implements KeyListener, ActionListener {
-	Double version = 1.11;
+	Double version = 1.337;
 	String secret="asdf";
 
 
@@ -52,7 +52,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	int maxEnemyBulletTime=6000;
 	Character[] boss;
 	Character c;
-	Character bullet;
+
 	Character[] cmetroid;
 	Character[] cATAT;
 	Character cpowerup;
@@ -90,13 +90,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	BufferedImage powerupimg = readimage("Sprites/powerup_potion_green.png");
 	BufferedImage hourglass = readimage("Sprites/Hourglass.png");
 	BufferedImage ATAT=readimage("Sprites/ATAT.png");
+	BufferedImage blast=readimage("Sprites/energy_blast.gif");
+	BufferedImage cannon=readimage("Sprites/cannon.PNG");
+	BufferedImage bombomb=readimage("Sprites/bombomb.png");
 	boolean debug = false;
 	boolean showFPS = false;
 
 	DecimalFormat df = new DecimalFormat("#.##");
 	int numberOfBosses;
 	int numberOfMetroids;
-	int numberOfATATs = 50;
+	int numberOfATATs;
 
 	// movements
 	boolean moveRight = false;
@@ -138,16 +141,16 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	boolean paused = false;
 
 
-	int X = 10;
-	int X2 = 5;
-
+	int X = 50;
+	int X2 =50;
+	int X3=20;
 
 
 	int poweruptimer;
 	int poweruptimer2;
 	double topscore;
 
-	
+
 
 	GamePaneel(int x, Tileset[] world, Character c) {
 		this.x = x;
@@ -161,7 +164,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		rCharacter = new Rectangle();
 		numberOfBosses = X;
 		numberOfMetroids = X2;
-
+		numberOfATATs=X3;
 		rpowerup = new Rectangle(0, 0, 0, 0);
 		cpowerup = new Character(0, 0);
 		rpowerup2 = new Rectangle(0, 0, 0, 0);
@@ -169,7 +172,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		// rBoss=new Rectangle[numberOfBosses];
 		// boss= new Character[numberOfBosses];
 
-		bullet = new Character(0, 0);
+
 		rBoss = new Rectangle[numberOfBosses];
 		boss = new Character[numberOfBosses];
 		rATAT=new Rectangle[numberOfATATs];
@@ -179,7 +182,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		metroidupward = new boolean[numberOfMetroids];
 		metroidgravity = new double[numberOfMetroids];
 		ATATgravity=new double[numberOfATATs];
-	
+
 		spawncharizards();
 		spawnpowerup();
 		spawnpowerup2();
@@ -214,7 +217,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		sw5 = readimage("Sprites/sw5.png");
 		sw6 = readimage("Sprites/sw6.png");
 		ds = readimage("Sprites/ds.png");
-		
+
 		anim = new Walker();
 		anim.addFrame(w1, 50);
 		anim.addFrame(w2, 50);
@@ -234,7 +237,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		anim2.addFrame(W7, 50);
 		currentSprite2 = anim2.getImage();
 		currentSprite = anim.getImage();
-		
+
 		anim3 = new Walker();
 		anim3.addFrame(sw1, 50);
 		anim3.addFrame(sw2, 50);
@@ -247,7 +250,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	double getTopscore() {
 		System.out.println("getting highscores");
 		double highscore= 0;
-		
+
 		try {
 			RestTemplate rest = new RestTemplate();
 
@@ -256,7 +259,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			System.out.println(j);
 		} catch (Exception exception) {
 			highscore=1000;
-		
+
 
 		}
 		return highscore;
@@ -277,9 +280,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 				} else {
 					x = x - direction;
-					bullet.move(-direction);
+
 					cpowerup.move(-direction);
 					cpowerup2.move(-direction);
+
 					for (int i = 0; i < numberOfBosses; i++) {
 
 						boss[i].move(-direction);
@@ -294,7 +298,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 						cATAT[i].move(-direction);
 					}
+					for (int i = 0; i < bullet3.size(); i++) {
+
+						bullet3.get(i).move(-direction);
+
+					}
 				}
+
+
 			}
 		}
 
@@ -306,7 +317,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 				} else {
 					x = x - direction;
-					bullet.move(-direction);
+
 					cpowerup.move(-direction);
 					cpowerup2.move(-direction);
 					for (int i = 0; i < numberOfBosses; i++) {
@@ -322,6 +333,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 						cATAT[i].move(-direction);
 					}
+					for (int i = 0; i < bullet3.size(); i++) {
+
+						bullet3.get(i).move(-direction);
+
+					}
+
+
 				}
 			}
 		}
@@ -349,11 +367,20 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}
 		for (int i = 0; i < rBullet3.size(); i++) {
-
+			if(!powerup2) {
 			if (bulletforward3.get(i))
 				bullet3.get(i).move(10);
 			else
 				bullet3.get(i).move(-10);
+			}
+			else {
+				if (bulletforward3.get(i))
+					bullet3.get(i).move((int) (10*growfactor2/2));
+				else
+					bullet3.get(i).move((int)(-10*growfactor2/2));
+				
+				
+			}
 
 		}
 		for (int i = 0; i < rBomb.size(); i++) {
@@ -371,9 +398,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				bombgravity.set(i,0.0) ;
 			} else {
 				cBomb.get(i).moveup(-bombgravity.get(i));
-				bombgravity.set(i,bombgravity.get(i)+0.2) ;
+				bombgravity.set(i,bombgravity.get(i)+0.5) ;
 
-				
+
 			}
 		}
 
@@ -388,7 +415,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else if (moveLeft) {
 			move(-movementSpeed);
 		}
-		
+
 
 		// move right
 
@@ -452,7 +479,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			throwbomb(c);
 		}
 		enemyBulletTime+=50;
-		if (enemyBulletTime > maxEnemyBulletTime) {
+		
+		if (enemyBulletTime > maxEnemyBulletTime &&!powerup2) {
+			enemyBulletTime = 0;
+			shoot3(cATAT);
+		}
+		if (enemyBulletTime > 3*maxEnemyBulletTime &&powerup2) {
 			enemyBulletTime = 0;
 			shoot3(cATAT);
 		}
@@ -599,7 +631,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					bullet2.remove(a);
 					rBullet2.remove(a);
 					bulletforward2.remove(a);
-					
+
 					// System.out.println(boss.length);
 					// System.out.println(rBoss.length);
 					break; // outer;
@@ -638,7 +670,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		for (int i = 0; i < numberOfATATs; i++) {
 			for (int a = 0; a < rBomb.size(); a++) {
-			//	System.out.println(i+  ""+ a);
+				//	System.out.println(i+  ""+ a);
 				if (gameUpdate(rATAT[i], rBomb.get(a))) {
 					// System.out.println(number);
 					// System.out.println(i);
@@ -669,7 +701,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 		for (int i = 0; i < numberOfATATs; i++) {
 			for (int a = 0; a < rBullet2.size(); a++) {
-			//	System.out.println(i+  ""+ a);
+				//	System.out.println(i+  ""+ a);
 				if (gameUpdate(rATAT[i], rBullet2.get(a))) {
 					// System.out.println(number);
 					// System.out.println(i);
@@ -691,7 +723,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					bullet2.remove(a);
 					rBullet2.remove(a);
 					bulletforward2.remove(a);
-				
+
 					// System.out.println(boss.length);
 					// System.out.println(rBoss.length);
 					break; // outer;
@@ -703,7 +735,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				if (gameUpdate(rBullet3.get(i), rBullet2.get(a))) {
 					// System.out.println(number);
 					// System.out.println(i);
-					
+
 					bullet2.remove(a);
 					rBullet2.remove(a);
 					bulletforward2.remove(a);
@@ -721,7 +753,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				if (gameUpdate(rBullet3.get(i), rBomb.get(a))) {
 					// System.out.println(number);
 					// System.out.println(i);
-					
+
 					cBomb.remove(a);
 					rBomb.remove(a);
 					bombforward.remove(a);
@@ -821,7 +853,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 		// face character right way
-		if (!moveRight && !moveLeft && forward && !jump && jumpAllowed && !shooting) {
+		if (!moveRight && !moveLeft && forward && !jump && jumpAllowed && !shooting && !bombing) {
 			if (!powerup)
 				g.drawImage(currentSprite = standaard, c.posX, getHeight() - size - c.posY, size, size, this);
 			else
@@ -829,13 +861,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}
 
-		else if (shooting && forward) {
+		else if ((bombing || shooting) && forward) {
 			if (!powerup) {
 				g.drawImage(currentSprite = anim3.getImage(), c.posX, getHeight() - size - c.posY, size+10, size+10, this);
 			} else {
 				g.drawImage(currentSprite = shootn, c.posX, getHeight() - size - c.posY, size, size, this);
 			}
-		} else if (shooting && !forward) {
+		} else if ((bombing ||shooting) && !forward) {
 			if (!powerup) {
 				g.drawImage(currentSprite = anim3.getImage(), c.posX + size, getHeight() - size - c.posY, -size-10, size+10, this);
 			} else {
@@ -844,7 +876,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		}
 
 		else if (jump && forward) {
-			if (shooting) {
+			if (shooting || bombing) {
 				g.drawImage(currentSprite = shoot, c.posX, getHeight() - size - c.posY, size, size, this);
 			} else if (!powerup)
 				g.drawImage(currentSprite = j1, c.posX, getHeight() - size - c.posY, size + 25, size + 25, this);
@@ -856,10 +888,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = J1, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 
 		}
 
@@ -874,10 +906,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		else if (!jumpAllowed && !jump && !forward) {
 			if (!powerup)
 				g.drawImage(currentSprite = j2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = J2, c.posX + size, getHeight() - size - c.posY, -(size + 25), size + 25,
-						this);
+				this);
 
 		}
 
@@ -896,10 +928,10 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		} else {
 			if (!powerup)
 				g.drawImage(currentSprite = anim.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-						this);
+				this);
 			else
 				g.drawImage(currentSprite2 = anim2.getImage(), c.posX + size, getHeight() - size - c.posY, -size, size,
-						this);
+				this);
 
 		}
 
@@ -922,9 +954,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			//
 
 			if (boss[i].posX < 0 /*
-									 * || boss[i].posY > getHeight() ||
-									 * boss[i].posY <0
-									 */) {
+			 * || boss[i].posY > getHeight() ||
+			 * boss[i].posY <0
+			 */) {
 
 				boss[i].posX = 10000;
 				// boss[i].posY=500;
@@ -969,13 +1001,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			if (debug) {
 				g.drawRect(cATAT[i].posX, getHeight() - size - cATAT[i].posY, size, size);
 			}
-			g.drawImage(ATAT, cATAT[i].posX, getHeight() - size - cATAT[i].posY, size, size, null);
+			g.drawImage(cannon, cATAT[i].posX, getHeight() - size - cATAT[i].posY, size, size, null);
 
 			// g.drawImage(charizard, boss[i].posX, getHeight() - size -
 			// boss[i].posY, size, size, null);
 
 		}
-		
+
 		for (int i = 0; i < rBullet2.size(); i++) {
 			if (rBullet2.get(i).width != 0) {
 				// System.out.println("TEST TEST");
@@ -994,12 +1026,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					// g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
 					rBullet2.get(i).setBounds(bullet2.get(i).posX,
 							getHeight() - bulletheight - bullet2.get(i).posY - 15, bulletwidth, bulletheight);
-					g.drawImage(bulletbill, rBullet2.get(i).x, rBullet2.get(i).y, bulletwidth, bulletheight, null);
+					g.drawImage(blast, rBullet2.get(i).x, rBullet2.get(i).y, bulletwidth, bulletheight, null);
 
 				} else {
 					rBullet2.get(i).setBounds(bullet2.get(i).posX - bulletwidth,
 							getHeight() - bulletheight - bullet2.get(i).posY - 15, bulletwidth, bulletheight);
-					g.drawImage(bulletbill, rBullet2.get(i).x, rBullet2.get(i).y, -bulletwidth, bulletheight, null);
+					g.drawImage(blast, rBullet2.get(i).x, rBullet2.get(i).y, -bulletwidth, bulletheight, null);
 
 				}
 
@@ -1020,17 +1052,19 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 					bulletheight = bulletHeight;
 				}
+				bulletheight=100;
+				bulletwidth=bulletheight;
 
 				if (bombforward.get(i)) {
 					// g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
 					rBomb.get(i).setBounds(cBomb.get(i).posX,
 							getHeight() - bulletheight - cBomb.get(i).posY - 15, bulletwidth, bulletheight);
-					g.drawImage(bulletbill, rBomb.get(i).x, rBomb.get(i).y, bulletwidth, bulletheight, null);
+					g.drawImage(bombomb, rBomb.get(i).x, rBomb.get(i).y, bulletwidth, bulletheight, null);
 
 				} else {
 					rBomb.get(i).setBounds(cBomb.get(i).posX - bulletwidth,
 							getHeight() - bulletheight - cBomb.get(i).posY - 15, bulletwidth, bulletheight);
-					g.drawImage(bulletbill, rBomb.get(i).x, rBomb.get(i).y, -bulletwidth, bulletheight, null);
+					g.drawImage(bombomb, rBomb.get(i).x, rBomb.get(i).y, -bulletwidth, bulletheight, null);
 
 				}
 
@@ -1043,11 +1077,11 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				// System.out.println("TEST TEST");
 				g.setColor(Color.BLACK);
 				int bulletwidth, bulletheight;
-			
-					bulletwidth = bulletWidth;
 
-					bulletheight = bulletHeight;
-				
+				bulletwidth = bulletWidth;
+
+				bulletheight = bulletHeight;
+
 
 				if (bulletforward3.get(i)) {
 					// g.fillRect(rBullet2.get(i).x,rBullet2.get(i).y,rBullet2.get(i).width,rBullet2.get(i).height);
@@ -1061,7 +1095,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 					g.drawImage(bulletbill, rBullet3.get(i).x, rBullet3.get(i).y, -bulletwidth, bulletheight, null);
 
 				}
-		
+
 				// System.out.println(rBullet);
 			}
 
@@ -1157,9 +1191,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			counter += gameworld[i].getSet()[0].length;
 		}
 
-		if (c.posY < -100 || (testCollission(rBoss, rCharacter) || testCollission(rMetroid, rCharacter) || testCollission(rATAT,rCharacter)) && !powerup || testCollission(rBullet3,rCharacter)) {
+		if (c.posY < -100 || (testCollission(rBoss, rCharacter) || testCollission(rMetroid, rCharacter) || testCollission(rATAT,rCharacter) || testCollission(rBullet3,rCharacter)) && !powerup ) {
 			gameover = true;
-			
+
 		}
 		for (int i = 0; i < numberOfBosses; i++) {
 			if (gameUpdate(rBoss[i], rCharacter) && powerup) {
@@ -1178,6 +1212,27 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 				}
 				rBoss = X;
 				boss = Y;
+				break;
+
+			}
+		}
+		for (int i = 0; i < numberOfATATs; i++) {
+			if (gameUpdate(rATAT[i], rCharacter) && powerup) {
+				numberOfATATs--;
+				Rectangle[] X = new Rectangle[numberOfATATs];
+				Character[] Y = new Character[numberOfATATs];
+				for (int j = 0; j < numberOfATATs; j++) {
+					if (j < i) {
+						X[j] = new Rectangle(rATAT[j].x, rATAT[j].y, 100, 100);
+						Y[j] = new Character(cATAT[j].posX, cATAT[j].posY);
+					} else {
+						X[j] = new Rectangle(rATAT[j + 1].x, rATAT[j + 1].y, 100, 100);
+						Y[j] = new Character(cATAT[j + 1].posX, cATAT[j + 1].posY);
+
+					}
+				}
+				rATAT = X;
+				cATAT = Y;
 				break;
 
 			}
@@ -1201,7 +1256,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.setColor(new Color(7, 237, 65));
 			g.fillRect((getWidth() / 2) - 200, 120, 400, 50);
 
-		
+
 
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer / powerUpDuration, 120,
@@ -1216,7 +1271,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			g.setColor(Color.YELLOW);
 			g.fillRect((getWidth() / 2) - 200, 70, 400, 50);
 
-			
+
 
 			g.setColor(new Color(201, 20, 20));
 			g.fillRect((getWidth() / 2) + 200 - 400 * poweruptimer2 / powerUpDuration2, 70,
@@ -1523,7 +1578,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
 
-			boss[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+			boss[i] = new Character((int) (Math.random() * 4.375 * gameworld.length * rectsize + 1000),
 					(int) (Math.random() * 750 + 250));
 			rBoss[i] = new Rectangle();
 
@@ -1547,7 +1602,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			// (int) (Math.random() * 750+250));
 			// System.out.println(((int) (Math.random() *
 			// 3/4*gameworld.length*rectsize+3*3/4*gameworld.length*rectsize)));
-			cmetroid[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+			cmetroid[i] = new Character((int) (Math.random() * 4.375 * gameworld.length * rectsize + 1000),
 					(int) (Math.random() * 500 + 250));
 
 			rMetroid[i] = new Rectangle();
@@ -1558,14 +1613,14 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 	}
 	public void spawnATATs() {
-		
+
 		cATAT = new Character[numberOfATATs];
 		rATAT = new Rectangle[numberOfATATs];
 		for (int i = 0; i < numberOfATATs; i++) {
 			// boss[i]=new Character((int) Math.random()*50000,(int)
 			// Math.random()*2000);
 
-			cATAT[i] = new Character((int) (Math.random() * 3 * gameworld.length * rectsize + 1000),
+			cATAT[i] = new Character((int) (Math.random() * 4.375 * gameworld.length * rectsize + 1000),
 					1000);
 			rATAT[i] = new Rectangle();
 
@@ -1573,7 +1628,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 
 		}
 
-		
+
 	}
 
 	public void deleteTile(int index) {
@@ -1695,9 +1750,9 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 			bombing=true;
 			break;
 		case KeyEvent.VK_T:
-			 showHighscoreDialog();
+			showHighscoreDialog();
 
-//			showCheatDialog();
+			//			showCheatDialog();
 		}
 	}
 
@@ -1720,11 +1775,12 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	}
 	public void shoot3(Character[] rekt) {
 		for(int i=0;i<rekt.length;i++) {
-		rBullet3.add(new Rectangle(500, 30, bulletWidth, bulletHeight));
-		bullet3.add(new Character(rekt[i].posX + bulletWidth + 10, rekt[i].posY + bulletHeight / 3));
-		bulletforward3.add(!forward);
+			rBullet3.add(new Rectangle(500, 30, bulletWidth, bulletHeight));
+			bullet3.add(new Character(rekt[i].posX + bulletWidth + 10, rekt[i].posY + 41));
+			bulletforward3.add(!forward);
 		}
-		
+		repaint();
+
 	}
 	public void throwbomb(Character bla) {
 		if (!powerup) {
@@ -1741,13 +1797,13 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		bombgravity.add(0.0);
 
 		repaint();
-		
+
 	}
 
 	public void spawnpowerup() {
 
 		rpowerup = new Rectangle(0, 0, 0, 0);
-		rpowerup.x = (int) (Math.random() * (gameworld.length * 3 * rectsize - getWidth() + x) + getWidth() - x);
+		rpowerup.x = (int) (Math.random() * (gameworld.length * 4.375 * rectsize - getWidth() + x) + getWidth() - x);
 		System.out.println(rpowerup.x);
 		// rpowerup.x=(int)
 		// (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
@@ -1763,7 +1819,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 	public void spawnpowerup2() {
 
 		rpowerup2 = new Rectangle(0, 0, 0, 0);
-		rpowerup2.x = (int) (Math.random() * (gameworld.length * 3 * rectsize - getWidth() + x) + getWidth() - x);
+		rpowerup2.x = (int) (Math.random() * (gameworld.length * 4.375 * rectsize - getWidth() + x) + getWidth() - x);
 		System.out.println(rpowerup2.x);
 		// rpowerup2.x=(int)
 		// (Math.random()*(gameworld.length*3*rectsize-getWidth())+getWidth());
@@ -1798,7 +1854,7 @@ public class GamePaneel extends JPanel implements KeyListener, ActionListener {
 		case KeyEvent.VK_X:
 			bombing = false;	
 		}
-		
+
 		addMovements(keyCode, frameCounter);
 	}
 
